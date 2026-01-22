@@ -60,9 +60,6 @@ private:
 	//攻撃(プレイヤーが取得している).
 	//ToDo : プレイヤーがポータルを取得している時に入れる攻撃用の関数.
 	void PlayerPressureAttack();
-	//優先度2: 防衛(自分がポータルを取得しているとき).
-	void Defense();
-
 	//優先度2: 防衛(Easyモードの時).
 	void DefenseEasy();
 	//優先度2: 防衛(Hardモードの時).
