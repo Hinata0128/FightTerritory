@@ -180,6 +180,7 @@ HRESULT Effect::LoadData()
 	{
 		//u""は、UTF-16エンコーディングの文字列リテラルで、const char16_t* に代入可能
 		{ enList::Laser01,	u"Data\\Effekseer\\Laser01.efk"	},
+		{ enList::LookPortal, u"Data\\Effekseer\\LookPortal.efk"},
 	};
 	//配列の最大要素数を算出（配列全体のサイズ／配列１つ分のサイズ）
 	int list_max = sizeof(EList) / sizeof(EList[0]);

@@ -131,8 +131,9 @@ void GameMain::Update()
 	{
 		static ::EsHandle hEffect = -1;
 
+		//エフェクト確認用のコード.
 		if (GetAsyncKeyState('Y') & 0x0001) {
-			hEffect = Effect::Play(Effect::Laser01, D3DXVECTOR3(0.f, 1.f, 0.f));
+			hEffect = Effect::Play(Effect::LookPortal, D3DXVECTOR3(0.f, 1.f, 0.f));
 
 			//拡大縮小
 			Effect::SetScale(hEffect, D3DXVECTOR3(0.8f, 0.8f, 0.8f));
@@ -141,7 +142,7 @@ void GameMain::Update()
 			Effect::SetRotation(hEffect, D3DXVECTOR3(0.f, D3DXToRadian(90.0f), 0.f));
 
 			//位置を再設定
-			Effect::SetLocation(hEffect, D3DXVECTOR3(0.f, 1.f, 1.f));
+			Effect::SetLocation(hEffect, D3DXVECTOR3(0.0f,5.0f,5.0f));
 		}
 		if (GetAsyncKeyState('T') & 0x0001) {
 			Effect::Stop(hEffect);
