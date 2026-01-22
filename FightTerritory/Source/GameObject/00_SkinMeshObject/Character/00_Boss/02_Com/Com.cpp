@@ -417,6 +417,8 @@ void Com::DefenseEasy()
 void Com::DefenseHard()
 {
 	float deltaTime = Timer::GetInstance().DeltaTime();
+	//累計時間の取得.
+	float totalTime = Timer::GetInstance().ElapsedTime();
 	//ボスの位置.
 	D3DXVECTOR3 BossPos_v = m_pOwner->GetPosition();
 	//ポータルの位置.
@@ -432,4 +434,23 @@ void Com::DefenseHard()
 	D3DXVec3Normalize(&Look, &Look);
 	float Angle = atan2f(-Look.x, -Look.z);
 	m_pOwner->SetRotationY(Angle);
+
+	//ポータルからボスへの方向.
+	D3DXVECTOR3 ToBoss = BossPos_v - PortalPos_v;
+	ToBoss.y = 0.0f;
+	float CurrentDist = D3DXVec3Length(&ToBoss);
+	if (CurrentDist < 0.01f)
+	{
+		return;
+	}
+
+	D3DXVECTOR3 Up(0, 1, 0);
+	D3DXVECTOR3 Tangent;
+	D3DXVec3Cross(&Tangent, &Up, &Tangent);
+
+	D3DXVECTOR3 Velocity = Tangent * m_MoveSpeed;
+
+	//ジグザグな動きを実装.
+	float ZigzagFtrqurncy = 5.0f;	//振るえる強さ.
+
 }
