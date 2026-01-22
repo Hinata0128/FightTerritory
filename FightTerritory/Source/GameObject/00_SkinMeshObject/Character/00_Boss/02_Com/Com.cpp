@@ -568,8 +568,6 @@ void Com::DefenseFinal()
 		ctx.AnimNo = WALK_ANIM;
 		ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
 	}
-	// 移動速度が速いときはアニメーションを少し早送りする演出も効果的
-	// (ctx.AnimCtrl->SetSpeed 等があれば moveSpeedMultiplier を渡すと◎)
 
 	m_pOwner->RequestShot();
 }
