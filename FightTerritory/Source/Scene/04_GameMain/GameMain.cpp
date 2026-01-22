@@ -142,12 +142,14 @@ void GameMain::Update()
 			Effect::SetRotation(hEffect, D3DXVECTOR3(0.f, D3DXToRadian(90.0f), 0.f));
 
 			//位置を再設定
-			Effect::SetLocation(hEffect, D3DXVECTOR3(0.0f,5.0f,5.0f));
+			Effect::SetLocation(hEffect, D3DXVECTOR3(0.0f,7.0f,5.0f));
 		}
 		if (GetAsyncKeyState('T') & 0x0001) {
 			Effect::Stop(hEffect);
 		}
 	}
+
+
 
 	//地面.
 	m_pGround->Update();
