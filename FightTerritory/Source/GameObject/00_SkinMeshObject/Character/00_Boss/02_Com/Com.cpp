@@ -246,7 +246,7 @@ void Com::DecideAction()
 	if (state == Portal::PortalPriority::Enemy)
 	{
 		m_pOwner->SetShotInterval(m_ShotInterval);
-		Defense();
+		DefenseEasy();
 		return;
 	}
 }
@@ -411,4 +411,65 @@ void Com::Defense()
 
 	//攻撃
 	m_pOwner->RequestShot();
+}
+
+void Com::DefenseEasy()
+{
+	float deltaTime = Timer::GetInstance().DeltaTime();
+	//ボスの位置.
+	D3DXVECTOR3 BossPos_v = m_pOwner->GetPosition();
+	//ポータルの位置.
+	D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+	//プレイヤーの位置.
+	D3DXVECTOR3 PlayerPos_v = m_pOwner->GetPlayerPos();
+	
+	BossContext ctx(m_pOwner);
+
+	//ボスがプレイヤーを注視する.
+	D3DXVECTOR3 look = PlayerPos_v - BossPos_v;
+	look.y = 0.0f;
+	D3DXVec3Normalize(&look, &look);
+	float Angle = std::atan2f(-look.x, -look.z);
+	m_pOwner->SetRotationY(Angle);
+
+	//ポータルの中心基準の方向.
+	D3DXVECTOR3 ToBoss = BossPos_v - PortalPos_v;
+	ToBoss.y = 0.0f;
+
+	float Dist = D3DXVec3Length(&ToBoss);
+	if (Dist < 0.01f)
+	{
+		return;
+	}
+
+	D3DXVec3Normalize(&ToBoss, &ToBoss);
+
+	//円運動の接線ベクトル.
+	D3DXVECTOR3 Up(0, 1, 0);
+	D3DXVECTOR3 Tangent;
+	D3DXVec3Cross(&Tangent, &Up, &ToBoss);
+
+	//円運動.
+	D3DXVECTOR3 Velocity = Tangent * m_MoveSpeed;
+
+	//半径制御.
+	if (Dist > m_DefenseRadius)
+	{
+		Velocity -= ToBoss * m_MoveSpeed;
+	}
+	m_pOwner->AddPosition(Velocity * deltaTime);
+
+	//歩きアニメーション.
+	const int WALK_ANIMATION = 2;
+	if (ctx.AnimNo != WALK_ANIMATION)
+	{
+		ctx.AnimNo = WALK_ANIMATION;
+		ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
+	}
+	//攻撃.
+	m_pOwner->RequestShot();
+}
+
+void Com::DefenseHard()
+{
 }
