@@ -63,6 +63,11 @@ private:
 	//—Dæ“x2: –h‰q(©•ª‚ªƒ|[ƒ^ƒ‹‚ğæ“¾‚µ‚Ä‚¢‚é‚Æ‚«).
 	void Defense();
 
+	//—Dæ“x2: –h‰q(Easyƒ‚[ƒh‚Ì).
+	void DefenseEasy();
+	//—Dæ“x2: –h‰q(Hardƒ‚[ƒh‚Ì).
+	void DefenseHard();
+
 
 private:
 	std::shared_ptr<Portal> m_pPortal;
