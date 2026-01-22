@@ -184,6 +184,7 @@
     <ClCompile Include="Source\Collision\BoundingBox\BoundingBox.cpp" />
     <ClCompile Include="Source\Collision\BoundingSphere\BoundingSphere.cpp" />
     <ClCompile Include="Source\Effect\Effect.cpp" />
+    <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\01_BossStateBase\03_BossPortalAnim\BossPortalAnim.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\Character.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\02_Com\Com.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\Boss.cpp" />
@@ -281,6 +282,7 @@
     <ClInclude Include="Source\Effekseer\include\Effekseer.Modules.h" />
     <ClInclude Include="Source\Effekseer\include\Effekseer.SIMD.h" />
     <ClInclude Include="Source\Effekseer\include\EffekseerRendererDX11.h" />
+    <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\01_BossStateBase\03_BossPortalAnim\BossPortalAnim.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\Character.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\02_Com\Com.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\Boss.h" />
