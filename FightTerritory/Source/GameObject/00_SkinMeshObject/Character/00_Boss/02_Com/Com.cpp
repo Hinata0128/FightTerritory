@@ -246,7 +246,7 @@ void Com::DecideAction()
 	if (state == Portal::PortalPriority::Enemy)
 	{
 		m_pOwner->SetShotInterval(m_ShotInterval);
-		DefenseEasy();
+		DefenseFinal();
 		return;
 	}
 }
@@ -446,11 +446,128 @@ void Com::DefenseHard()
 
 	D3DXVECTOR3 Up(0, 1, 0);
 	D3DXVECTOR3 Tangent;
-	D3DXVec3Cross(&Tangent, &Up, &Tangent);
+	D3DXVec3Cross(&Tangent, &Up, &ToBoss);
 
-	D3DXVECTOR3 Velocity = Tangent * m_MoveSpeed;
+	//回転速度の調整.
+	//ボスの回転速度の調整.
+	float rotationSpeedRate = 0.4f;
+	D3DXVECTOR3 horizontalVelocity = Tangent * (m_MoveSpeed * rotationSpeedRate);
 
-	//ジグザグな動きを実装.
-	float ZigzagFtrqurncy = 5.0f;	//振るえる強さ.
+	//ジグザグの調整
+	float zigzagFrequency = 2.0f;   //揺れる周期（速さ）
+	float zigzagAmplitude = 1.5f;   //揺れる幅
+	float Wave = sinf(totalTime * zigzagFrequency) * zigzagAmplitude;
 
+	//前後移動の速度係数.
+	//ジグザグの動き自体の移動スピードを抑えたい場合はここを調整
+	float zigzagSpeedRate = 0.5f;
+	D3DXVECTOR3 forwardVelocity = ToBoss * (Wave * zigzagSpeedRate);
+
+	//最終的な速度ベクトルの合成.
+	D3DXVECTOR3 Velocity = horizontalVelocity + forwardVelocity;
+
+	//半径維持の引き戻し
+	if (CurrentDist > m_DefenseRadius)
+	{
+		Velocity -= ToBoss * (m_MoveSpeed * 0.5f);
+	}
+
+	m_pOwner->AddPosition(Velocity * deltaTime);
+
+	// アニメーション・攻撃
+	const int WALK_ANIMATION = 2;
+	if (ctx.AnimNo != WALK_ANIMATION)
+	{
+		ctx.AnimNo = WALK_ANIMATION;
+		ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
+	}
+	m_pOwner->RequestShot();
+}
+
+void Com::DefenseFinal()
+{
+	float deltaTime = Timer::GetInstance().DeltaTime();
+	float totalTime = Timer::GetInstance().ElapsedTime();
+
+	D3DXVECTOR3 BossPos_v = m_pOwner->GetPosition();
+	D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+	D3DXVECTOR3 PlayerPos_v = m_pOwner->GetPlayerPos();
+
+	// 1. プレイヤーを注視（これは基本）
+	D3DXVECTOR3 Look = PlayerPos_v - BossPos_v;
+	Look.y = 0.0f;
+	D3DXVec3Normalize(&Look, &Look);
+	float Angle = atan2f(-Look.x, -Look.z);
+	m_pOwner->SetRotationY(Angle);
+
+	// 2. 基本ベクトル計算
+	D3DXVECTOR3 ToBoss = BossPos_v - PortalPos_v;
+	ToBoss.y = 0.0f;
+	float CurrentDist = D3DXVec3Length(&ToBoss);
+	if (CurrentDist < 0.01f) return;
+	D3DXVec3Normalize(&ToBoss, &ToBoss);
+
+	D3DXVECTOR3 Up(0, 1, 0);
+	D3DXVECTOR3 Tangent;
+	D3DXVec3Cross(&Tangent, &Up, &ToBoss);
+
+	// --- ★難易度アップの仕掛け：二重サイン波とカオス移動 ---
+
+	// A. 複雑な軌道（円運動に「うねり」を加える）
+	// 二つの異なる周期のサイン波を合成して、移動パターンを読ませない
+	float waveA = sinf(totalTime * 3.5f) * 2.0f;
+	float waveB = cosf(totalTime * 7.0f) * 1.5f;
+	float finalWave = waveA + waveB;
+
+	// B. 4秒周期の強烈な緩急パターン
+	float patternTime = fmodf(totalTime, 4.0f);
+	float rotationSpeedRate = 1.0f;
+	float moveSpeedMultiplier = 1.0f;
+	bool isEnraged = false; // 猛攻フラグ
+
+	if (patternTime < 1.0f) {
+		// 【超高速旋回】一気に回り込む
+		rotationSpeedRate = 2.5f;
+		moveSpeedMultiplier = 1.5f;
+	}
+	else if (patternTime < 1.5f) {
+		// 【急ブレーキ & 溜め】一瞬止まって連射準備（あえて隙を見せて誘う）
+		rotationSpeedRate = 0.2f;
+		finalWave = 0.0f;
+		m_pOwner->SetShotInterval(m_PressureShotInterval * 0.5f); // 限界まで連射
+	}
+	else if (patternTime < 2.5f) {
+		// 【カウンター・ダッシュ】プレイヤーに向かって斜め前に踏み込む
+		rotationSpeedRate = -1.5f; // 逆回転しつつ
+		ToBoss *= -2.5f;          // 急接近（マイナスはPortal方向＝プレイヤー接近）
+		moveSpeedMultiplier = 2.0f;
+		isEnraged = true;
+	}
+	else {
+		// 【離脱】大きく距離をとって仕切り直し
+		rotationSpeedRate = 1.8f;
+		ToBoss *= 2.0f; // Portalから離れる
+	}
+
+	// 速度の合成
+	D3DXVECTOR3 horizontalVel = Tangent * (m_MoveSpeed * rotationSpeedRate * moveSpeedMultiplier);
+	D3DXVECTOR3 forwardVel = ToBoss * (finalWave * moveSpeedMultiplier);
+	D3DXVECTOR3 Velocity = horizontalVel + forwardVel;
+
+	// 半径維持（Finalは守備範囲を広くしつつ、外に出過ぎたら超高速で戻る）
+	if (CurrentDist > m_DefenseRadius) {
+		Velocity -= ToBoss * (m_MoveSpeed * 2.0f);
+	}
+
+	m_pOwner->AddPosition(Velocity * deltaTime);
+
+	// --- 3. アニメーション：速度に合わせて再生速度を変えるイメージ ---
+	BossContext ctx(m_pOwner);
+	const int WALK_ANIM = 2;
+	if (ctx.AnimNo != WALK_ANIM) {
+		ctx.AnimNo = WALK_ANIM;
+		ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
+	}
+
+	m_pOwner->RequestShot();
 }

@@ -64,7 +64,8 @@ private:
 	void DefenseEasy();
 	//—Dæ“x2: –h‰q(Hardƒ‚[ƒh‚Ì).
 	void DefenseHard();
-
+	//—Dæ“x2: –h‰q(Finalƒ‚[ƒh‚Ì).
+	void DefenseFinal();
 
 private:
 	std::shared_ptr<Portal> m_pPortal;
