@@ -416,4 +416,20 @@ void Com::DefenseEasy()
 
 void Com::DefenseHard()
 {
+	float deltaTime = Timer::GetInstance().DeltaTime();
+	//ボスの位置.
+	D3DXVECTOR3 BossPos_v = m_pOwner->GetPosition();
+	//ポータルの位置.
+	D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+	//プレイヤーの位置.
+	D3DXVECTOR3 PlayerPos_v = m_pOwner->GetPlayerPos();
+
+	BossContext ctx(m_pOwner);
+
+	//ボスがプレイヤーを注視する.
+	D3DXVECTOR3 Look = PlayerPos_v - BossPos_v;
+	Look.y = 0.0f;
+	D3DXVec3Normalize(&Look, &Look);
+	float Angle = atan2f(-Look.x, -Look.z);
+	m_pOwner->SetRotationY(Angle);
 }
