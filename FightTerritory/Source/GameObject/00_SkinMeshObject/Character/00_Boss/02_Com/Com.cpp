@@ -96,11 +96,11 @@ void Com::DrawDebugImGui()
 void Com::DecideDifficultyByRound(int raund)
 {
 	int Raund = rand() % 100;
-#if 0
+#if 1
 	if (raund == 1)
 	{
-		//7割りEasyモード.
-		if (Raund < 70)
+		//9割りEasyモード.
+		if (Raund < 90)
 		{
 			SetDifficulty(BossDifficulty::Easy);
 		}
@@ -112,8 +112,8 @@ void Com::DecideDifficultyByRound(int raund)
 	}
 	else if (raund == 2)
 	{
-		//8割りHardモード.
-		if (Raund < 80)
+		//6割りHardモード.
+		if (Raund < 60)
 		{
 			SetDifficulty(BossDifficulty::Hard);
 		}
@@ -146,7 +146,7 @@ void Com::SetDifficulty(BossDifficulty diff)
 
 void Com::ApplyDifficultyParam()
 {
-#if 0
+#if 1
 	if (m_Difficulty == BossDifficulty::Easy)
 	{
 		m_MoveSpeed = 1.2f;
@@ -156,16 +156,16 @@ void Com::ApplyDifficultyParam()
 	}
 	else if (m_Difficulty == BossDifficulty::Hard)
 	{
-		m_MoveSpeed = 1.8f;
-		m_ShotInterval = 0.8f;
-		m_PressureShotInterval = 0.5f;
+		m_MoveSpeed = 3.5f;
+		m_ShotInterval = 2.0f;
+		m_PressureShotInterval = 1.5f;
 		m_DefenseRadius = 8.0f;
 	}
 	else if (m_Difficulty == BossDifficulty::Final)
 	{
-		m_MoveSpeed = 2.4f;
-		m_ShotInterval = 0.4f;
-		m_PressureShotInterval = 0.2f;
+		m_MoveSpeed = 5.0f;
+		m_ShotInterval = 1.0f;
+		m_PressureShotInterval = 0.5f;
 		m_DefenseRadius = 10.0f;
 	}
 #else
