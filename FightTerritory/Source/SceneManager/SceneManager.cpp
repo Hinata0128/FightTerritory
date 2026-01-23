@@ -194,6 +194,8 @@ void SceneManager::MakeScene(List Scene)
 	switch (Scene)
 	{
 	case SceneManager::OP:
+		//ToDo : クレジットから戻ってきたときにクレジットの音楽を停止してタイトル用の曲に戻す.
+		SoundManager::GetInstance()->Stop(SoundManager::BGM_Title);
 		SoundManager::GetInstance()->PlayLoop(SoundManager::BGM_Title);
 		SoundManager::GetInstance()->Stop(SoundManager::BGM_Ending);
 		SoundManager::GetInstance()->Stop(SoundManager::BGM_Over);
