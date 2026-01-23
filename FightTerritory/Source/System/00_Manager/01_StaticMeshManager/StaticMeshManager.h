@@ -23,7 +23,8 @@ public:
 		SkyBox,				//背景画像の導入.
 
 		PortalFrame,		//ポータルの範囲表示.
-		//壁のメッシュ.
+		
+		Wall,				//壁のメッシュ.
 
 		Max,
 	};
