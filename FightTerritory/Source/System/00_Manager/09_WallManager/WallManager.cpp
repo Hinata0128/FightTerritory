@@ -62,6 +62,11 @@ void WallManager::Draw()
 			{
 				m_Wall[i]->SetPosition(Pos);
 			}
+			D3DXVECTOR3 Scale = m_Wall[i]->GetScale();
+			if (ImGui::DragFloat3("Scale", (float*)&Scale, 0.1f))
+			{
+				m_Wall[i]->SetScale(Scale);
+			}
 			ImGui::TreePop();
 		}
 	}
