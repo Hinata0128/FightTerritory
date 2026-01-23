@@ -280,145 +280,73 @@ void PlayerMove::LButtonAttackStep(PlayerContext& ctx)
 
 void PlayerMove::HandleMove(
     PlayerContext& ctx,
-    const D3DXVECTOR3& ForwardAndBackward, // 既存の引数
-    const D3DXVECTOR3& LeftAndRight)       // 既存の引数
+    const D3DXVECTOR3& ForwardAndBackward,
+    const D3DXVECTOR3& LeftAndRight)
 {
     Camera& cam = Camera::GetInstance();
     D3DXVECTOR3 camForward = cam.GetForward();
     D3DXVECTOR3 camRight = cam.GetRight();
 
-    // 攻撃中かどうか（アニメを変更するか判断）
-    bool IsRAttacking = (step != enStep::none);
-    bool IsLAttacking = (LStep != enLeftStep::none);
+    // 高低差（y軸）の影響を無視して、地面の方向だけを計算
+    camForward.y = 0.0f;
+    camRight.y = 0.0f;
+    D3DXVec3Normalize(&camForward, &camForward);
+    D3DXVec3Normalize(&camRight, &camRight);
 
-    // 移動アニメーションを適応させる
-    auto ApplyMoveAnimation = [&](int animNo)
-        {
-            if (IsRAttacking || IsLAttacking)
-            {
-                return;
-            }
-            if (ctx.AnimNo != animNo)
-            {
-                ctx.AnimNo = animNo;
-                ctx.AnimTime = 0.0;
-                ctx.Mesh->SetAnimSpeed(ctx.AnimSpeed, ctx.AnimCtrl);
-                ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
-            }
-        };
+    // --- ① 目標となる移動方向ベクトルを合成する ---
+    D3DXVECTOR3 targetDir(0, 0, 0);
 
+    // 現在の enMove 判定を利用して進みたい方向を合成
     switch (Move)
     {
-    case enMove::Idol:
-    {
-        ApplyMoveAnimation(0);
-        ctx.AnimTime += ctx.AnimSpeed;
+    case enMove::ForWard:          targetDir = camForward; break;
+    case enMove::Back:             targetDir = -camForward; break;
+    case enMove::Left:             targetDir = -camRight; break;
+    case enMove::Right:            targetDir = camRight; break;
+    case enMove::ForWardAndLeft:   targetDir = camForward - camRight; break;
+    case enMove::ForWardAAndRight: targetDir = camForward + camRight; break;
+    case enMove::BackAndLeft:      targetDir = -camForward - camRight; break;
+    case enMove::BackAndRight:     targetDir = -camForward + camRight; break;
+    default:                       targetDir = D3DXVECTOR3(0, 0, 0); break;
     }
-    break;
 
-    case enMove::ForWard:
-    {
-        ctx.Position += camForward * add_value;
-        ctx.Rotation.y = atan2f(camForward.x, camForward.z); // キャラを進行方向に向ける
-        ApplyMoveAnimation(2);
-        ctx.AnimTime += ctx.AnimSpeed;
-        double period = ctx.Mesh->GetAnimPeriod(18);
-        if (ctx.AnimTime >= period)
-        {
-            ctx.Mesh->SetAnimSpeed(0.0, ctx.AnimCtrl);
-            ctx.AnimTime += ctx.AnimSpeed;
-        }
-    }
-    break;
+    // --- ② 移動と滑らかな回転の処理 ---
+    float length = D3DXVec3Length(&targetDir);
 
-    case enMove::Back:
+    if (length > 0.0f)
     {
-        ctx.Position -= camForward * add_value;
-        ctx.Rotation.y = atan2f(-camForward.x, -camForward.z);
-        ApplyMoveAnimation(0);
-        ctx.AnimTime += ctx.AnimSpeed;
-    }
-    break;
+        // ベクトルを正規化（斜め移動で速くならないように）
+        D3DXVec3Normalize(&targetDir, &targetDir);
 
-    case enMove::Left:
-    {
-        ctx.Position -= camRight * add_value;
-        ctx.Rotation.y = atan2f(-camRight.x, -camRight.z);
-        ApplyMoveAnimation(2);
-        ctx.AnimTime += ctx.AnimSpeed;
-        double period = ctx.Mesh->GetAnimPeriod(18);
-        if (ctx.AnimTime >= period)
-        {
-            ctx.Mesh->SetAnimSpeed(0.0, ctx.AnimCtrl);
-            ctx.AnimTime += ctx.AnimSpeed;
-        }
-    }
-    break;
+        // 座標更新
+        ctx.Position += targetDir * add_value;
 
-    case enMove::Right:
-    {
-        ctx.Position += camRight * add_value;
-        ctx.Rotation.y = atan2f(camRight.x, camRight.z);
-        ApplyMoveAnimation(2);
-        ctx.AnimTime += ctx.AnimSpeed;
-        double period = ctx.Mesh->GetAnimPeriod(18);
-        if (ctx.AnimTime >= period)
-        {
-            ctx.Mesh->SetAnimSpeed(0.0, ctx.AnimCtrl);
-            ctx.AnimTime += ctx.AnimSpeed;
-        }
-    }
-    break;
+        // 目標の角度（ラジアン）を算出
+        float targetRotationY = atan2f(targetDir.x, targetDir.z);
 
-    case enMove::ForWardAndLeft:
-    {
-        D3DXVECTOR3 dir = camForward - camRight;
-        D3DXVec3Normalize(&dir, &dir);
-        ctx.Position += dir * add_value;
-        ctx.Rotation.y = atan2f(dir.x, dir.z);
-        ApplyMoveAnimation(2);
-        ctx.AnimTime += ctx.AnimSpeed;
-        double period = ctx.Mesh->GetAnimPeriod(18);
-        if (ctx.AnimTime >= period) { ctx.Mesh->SetAnimSpeed(0.0, ctx.AnimCtrl); }
-    }
-    break;
+        // 【ここがポイント】現在の角度から目標角度へ少しずつ近づける
+        float diff = targetRotationY - ctx.Rotation.y;
 
-    case enMove::ForWardAAndRight:
-    {
-        D3DXVECTOR3 dir = camForward + camRight;
-        D3DXVec3Normalize(&dir, &dir);
-        ctx.Position += dir * add_value;
-        ctx.Rotation.y = atan2f(dir.x, dir.z);
-        ApplyMoveAnimation(2);
-        ctx.AnimTime += ctx.AnimSpeed;
-        double period = ctx.Mesh->GetAnimPeriod(18);
-        if (ctx.AnimTime >= period) { ctx.Mesh->SetAnimSpeed(0.0, ctx.AnimCtrl); }
-    }
-    break;
+        // 180度以上回転しないように最短ルートを計算 (-PI ~ PI の範囲に補正)
+        while (diff > D3DX_PI) diff -= D3DX_PI * 2.0f;
+        while (diff < -D3DX_PI) diff += D3DX_PI * 2.0f;
 
-    case enMove::BackAndLeft:
-    {
-        D3DXVECTOR3 dir = -camForward - camRight;
-        D3DXVec3Normalize(&dir, &dir);
-        ctx.Position += dir * add_value;
-        ctx.Rotation.y = atan2f(dir.x, dir.z);
-        ApplyMoveAnimation(0);
-        ctx.AnimTime += ctx.AnimSpeed;
-    }
-    break;
+        // 回転速度（0.1f ならゆっくり、0.3f なら素早く向く）
+        float lerpFactor = 0.15f;
+        ctx.Rotation.y += diff * lerpFactor;
 
-    case enMove::BackAndRight:
-    {
-        D3DXVECTOR3 dir = -camForward + camRight;
-        D3DXVec3Normalize(&dir, &dir);
-        ctx.Position += dir * add_value;
-        ctx.Rotation.y = atan2f(dir.x, dir.z);
-        ApplyMoveAnimation(0);
+        // 走りアニメーション
+        ctx.AnimNo = 2;
         ctx.AnimTime += ctx.AnimSpeed;
     }
-    break;
+    else
+    {
+        // 静止アニメーション
+        ctx.AnimNo = 0;
+        ctx.AnimTime += ctx.AnimSpeed;
     }
 }
+
 //Playerの動作[InputKeyManagerを使用して]書く関数.
 PlayerMove::enMove PlayerMove::GetMoveInput()
 {
