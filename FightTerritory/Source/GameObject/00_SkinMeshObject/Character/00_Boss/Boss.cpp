@@ -147,7 +147,8 @@ void Boss::Update()
     
     if (!IsDaed())
     {
-        m_pCom->Update();
+        //ToDo : 壁の配置をするためボスは今動かないようにしておく.
+        //m_pCom->Update();
     }
 
     // ボーン座標取得
