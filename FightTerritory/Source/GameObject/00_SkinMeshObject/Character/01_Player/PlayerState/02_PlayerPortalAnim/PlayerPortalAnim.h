@@ -3,13 +3,12 @@
 
 /********************************************************************************
 *	ポータル取得時にアニメーションを再生させるためのクラスです.
-*	このクラスはPlayerに入れないでポータルクラスにいれようと考えてきます.
 **/
 
 class Player;
 class PlayerContext;
 
-class PlayerPortalAnim
+class PlayerPortalAnim final
 	: public PlayerState
 {
 public:
