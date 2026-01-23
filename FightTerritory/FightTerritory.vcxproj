@@ -214,6 +214,7 @@
       <ForcedIncludeFiles Condition="'$(Configuration)|$(Platform)'=='Release|x64'">stdafx.h</ForcedIncludeFiles>
     </ClCompile>
     <ClCompile Include="Source\DirectX\DirectX9.cpp" />
+    <ClCompile Include="Source\GameObject\02_StaticMeshObject\05_Wall\Wall.cpp" />
     <ClCompile Include="Source\GameObject\GameObject.cpp" />
     <ClCompile Include="Source\GameObject\02_StaticMeshObject\01_Portal\Portal.cpp" />
     <ClCompile Include="Source\GameObject\02_StaticMeshObject\02_ShotBase\PShot\PShot.cpp" />
@@ -310,6 +311,7 @@
     <ClInclude Include="Source\GameObject\01_SpriteObject\SpriteObject.h" />
     <ClInclude Include="Source\DirectX\DirectX11.h" />
     <ClInclude Include="Source\DirectX\DirectX9.h" />
+    <ClInclude Include="Source\GameObject\02_StaticMeshObject\05_Wall\Wall.h" />
     <ClInclude Include="Source\GameObject\GameObject.h" />
     <ClInclude Include="Source\GameObject\02_StaticMeshObject\01_Portal\Portal.h" />
     <ClInclude Include="Source\GameObject\02_StaticMeshObject\02_ShotBase\PShot\PShot.h" />

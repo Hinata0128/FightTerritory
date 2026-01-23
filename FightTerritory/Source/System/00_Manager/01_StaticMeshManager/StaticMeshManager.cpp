@@ -37,6 +37,7 @@ void StaticMeshManager::Create()
 		{ static_cast<int>(CMeshList::Portal),			_T("Data\\Mesh\\Static\\Portal\\Portal.x")},
 		{ static_cast<int>(CMeshList::SkyBox),			_T("Data\\Mesh\\Static\\SkyBox\\SkyBox.x")},
 		{ static_cast<int>(CMeshList::PortalFrame),		_T("Data\\Mesh\\Static\\PortalFrame\\PortalFrame.x")},
+		{ static_cast<int>(CMeshList::Wall),			_T("Data\\Mesh\\Static\\Wall\\Wall.x")},
 	};
 
 	//”z—ñ‚Ì—v‘f”‚ğæ“¾.
