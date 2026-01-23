@@ -1,5 +1,6 @@
 #pragma once
 #include "..//ManagerBase.h"
+#include <json.hpp>
 
 class Wall;
 
@@ -22,5 +23,5 @@ public:
 
 
 private:
-
+	std::vector<std::unique_ptr<Wall>> m_Wall;
 };

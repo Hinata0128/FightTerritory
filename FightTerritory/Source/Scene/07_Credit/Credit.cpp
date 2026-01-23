@@ -171,7 +171,7 @@ void Credit::UpdateSelect()
 		m_InputTimer = 0.0f;
 	}
 
-	if (GetAsyncKeyState(VK_RETURN) & 0x0001)
+	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
 	{
 		if (m_InputTimer >= 0.2f)
 		{
