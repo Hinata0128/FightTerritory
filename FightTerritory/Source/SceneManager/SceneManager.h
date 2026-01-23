@@ -7,6 +7,7 @@
 #include "Scene/04_GameMain/GameMain.h"
 #include "Scene/06_GameOver/GameOver.h"
 #include "Scene/05_Ending/Ending.h"
+#include "Scene/07_Credit/Credit.h"
 
 #include "GameObject/02_StaticMeshObject/01_Portal/Portal.h"
 
@@ -21,13 +22,15 @@ public:
 	//シーンリストの列挙型.
 	enum List
 	{
-		OP,		//タイトル.
-		First,	//第一ラウンド開始画像.
-		Second,	//第二ラウンド開始画像.
-		Final,	//第三ラウンド開始画像.
-		Main,	//メイン.
-		Lose,	//敗北.
-		Win,	//勝利.
+		OP,			//タイトル.
+		First,		//第一ラウンド開始画像.
+		Second,		//第二ラウンド開始画像.
+		Final,		//第三ラウンド開始画像.
+		Main,		//メイン.
+		Lose,		//敗北.
+		Win,		//勝利.
+		//ToDo : クレジットクラスと名前がかぶるためCを先頭に書いた.
+		CCredit,	//クレジット.
 
 		max,	//何も書かない.
 	};

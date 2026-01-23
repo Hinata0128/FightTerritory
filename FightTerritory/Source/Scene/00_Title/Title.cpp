@@ -134,7 +134,7 @@ void Title::Update()
     }
     if (GetAsyncKeyState('A') & 0x0001)
     {
-        SceneManager::GetInstance()->LoadScene(SceneManager::Win);
+        SceneManager::GetInstance()->LoadScene(SceneManager::CCredit);
     }
 }
 

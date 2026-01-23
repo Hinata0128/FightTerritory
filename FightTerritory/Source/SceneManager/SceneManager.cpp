@@ -230,6 +230,12 @@ void SceneManager::MakeScene(List Scene)
 		SoundManager::GetInstance()->PlayLoop(SoundManager::BGM_Ending);
 		m_pScene = std::make_unique<Ending>();
 		break;
+	case SceneManager::CCredit:
+		SoundManager::GetInstance()->Stop(SoundManager::BGM_Title);
+		//ToDo : 今クレジットの音楽をTitleにしているけど最終的には変更する.
+		SoundManager::GetInstance()->PlayLoop(SoundManager::BGM_Title);
+		m_pScene = std::make_unique<Credit>();
+		break;
 	default:
 		break;
 	}
