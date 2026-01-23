@@ -137,7 +137,7 @@ void Title::Update()
     }
 
 #ifdef _DEBUG
-    if (GetAsyncKeyState(VK_SPACE) & 0x0001)
+    if (GetAsyncKeyState(VK_CONTROL) & 0x0001)
     {
         SceneManager::GetInstance()->LoadScene(SceneManager::Lose);
     }
@@ -213,7 +213,7 @@ void Title::UpdateSelect()
 
     SelectMenu oldSelect = m_Select;
 
-    if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+    if (GetAsyncKeyState('S') & 0x8000)
     {
         if (m_InputTimer >= 0.2f)
         {
@@ -227,7 +227,7 @@ void Title::UpdateSelect()
             }
         }
     }
-    else if (GetAsyncKeyState(VK_UP) & 0x8000)
+    else if (GetAsyncKeyState('W') & 0x8000)
     {
         if (m_InputTimer >= 0.2f)
         {   
@@ -250,7 +250,7 @@ void Title::UpdateSelect()
         m_InputTimer = 0.0f;
     }
 
-    if (GetAsyncKeyState(VK_RETURN) & 0x0001)
+    if (GetAsyncKeyState(VK_SPACE) & 0x0001)
     {
         if (m_InputTimer >= 0.2f)
         {
