@@ -36,8 +36,6 @@
 
 #include "GameObject/02_StaticMeshObject/04_PortalFrame/PortalFrame.h"
 
-#include "GameObject/02_StaticMeshObject/05_Wall/Wall.h"
-
 class Timer;
 
 
@@ -103,8 +101,6 @@ private:
 	std::unique_ptr<TestFont> m_Font;
 
 	std::unique_ptr<PortalFrame> m_PortalFrame;
-
-	std::unique_ptr<Wall> m_pWall;
 
 	//プレイヤーとボスのリスポーン時間の設定.
 	float m_PlayerRespawnTimer;

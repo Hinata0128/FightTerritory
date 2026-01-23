@@ -83,6 +83,12 @@ ViewportId=0xD6FA3A12
 Size=150,319
 Collapsed=0
 
+[Window][Wall Editor]
+ViewportPos=1589,517
+ViewportId=0x8C16BDF2
+Size=303,184
+Collapsed=0
+
 [Docking][Data]
 DockNode    ID=0x00000001 Pos=1596,80 Size=300,180 Split=Y Selected=0xC03952A5
   DockNode  ID=0x00000002 Parent=0x00000001 SizeRef=300,90 Selected=0x660C8DAE
