@@ -40,6 +40,8 @@ GameMain::GameMain()
 	, m_Font(std::make_unique<TestFont>())
 
 	, m_PortalFrame(std::make_unique<PortalFrame>())
+	
+	, m_pWall(std::make_unique<Wall>())
 
 	, m_PlayerRespawnTimer(0.0f)
 	, m_BossRespawnTimer(0.0f)
@@ -248,6 +250,8 @@ void GameMain::Update()
 	//ポータルの更新（ここで100%判定とシーン遷移が行われる）
 	m_pPortal->Update();
 
+	m_pWall->Update();
+
 	if (m_pPortal->IsReadyToLoad())
 	{
 		int nextID = m_pPortal->GetNextScene();
@@ -321,6 +325,9 @@ void GameMain::Draw()
 	//Effectクラス
 	Effect::GetInstance()->Draw();
 	m_PortalFrame->Draw();
+
+	m_pWall->Draw();
+
 	m_pHpBar->Draw();
 	m_pBossHpBar->Draw();
 
