@@ -12,7 +12,8 @@
 Title::Title()
     : m_Select              ( SelectMenu::Start )
     , m_State               ( TitleState::Select )
-    , m_StartPos            ( 550.f, 550.f, 0.f )
+    , m_StartPos            ( 550.f, 450.f, 0.f )
+    , m_CreditPos           ( 550.f, 550.f, 0.f )
     , m_EndPos              ( 550.f, 650.f, 0.f )
 
     , m_pSpriteBack         ( std::make_shared<Sprite2D>() )
@@ -23,6 +24,9 @@ Title::Title()
 
     ,m_pSpriteStart         ( std::make_shared<Sprite2D>() )
     ,m_upStart              ( std::make_shared<UIObject>() )
+
+    , m_pSpriteCredit       ( std::make_shared<Sprite2D>() )
+    , m_upCredit            ( std::make_shared<UIObject>() )
 
     ,m_pSpriteEnd           ( std::make_shared<Sprite2D>() )
     ,m_upEnd                ( std::make_shared<UIObject>() )
@@ -57,7 +61,7 @@ void Title::Create()
     const float Defeat_W = 430.0f;
     const float Defeat_H = 210.0f;
 
-    //スタート画像のサイズ.
+    //スタート・クレジットボタン画像のサイズ.
     const float Start_W = 135.0f;
     const float Staet_H = 45.0f;
 
@@ -86,6 +90,10 @@ void Title::Create()
     //スタート画像の読み込み.
     m_pSpriteStart->Init(_T("Data\\Image\\Setting\\S_Start.png"), ssStart);
     m_upStart->AttachSprite(m_pSpriteStart);
+
+    //クレジットボタン画像の読み込み.
+    m_pSpriteCredit->Init(_T("Data\\Image\\Setting\\CreditButton.png"), ssStart);
+    m_upCredit->AttachSprite(m_pSpriteCredit);
 
     //エンドボタン
     Sprite2D::SPRITE_STATE ssEnd{ End_W, End_H, End_W, End_H, End_W, End_H };
@@ -148,7 +156,22 @@ void Title::Draw()
     m_upBack->Draw();
     m_upTitle->Draw();
 
-    D3DXVECTOR3 currentSelectPos = (m_Select == SelectMenu::Start) ? m_StartPos : m_EndPos;
+    D3DXVECTOR3 currentSelectPos;
+
+    switch (m_Select)
+    {
+    case SelectMenu::Start:  
+        currentSelectPos = m_StartPos;  
+        break;
+    case SelectMenu::End:
+        currentSelectPos = m_EndPos;    
+        break;
+    case SelectMenu::Credit:
+        currentSelectPos = m_CreditPos; 
+        break;
+    default:
+        break; 
+    }
 
     D3DXVECTOR3 backPos = currentSelectPos;
     backPos.x -= 100.0f; //背景を左にずらして、文字を背景の中央に合わせる
@@ -164,8 +187,10 @@ void Title::Draw()
 
     //ボタンの座標更新と描画
     m_upStart->SetPosition(m_StartPos);
+    m_upCredit->SetPosition(m_CreditPos);
     m_upEnd->SetPosition(m_EndPos);
     m_upStart->Draw();
+    m_upCredit->Draw();
     m_upEnd->Draw();
 
     //フェード
@@ -186,18 +211,32 @@ void Title::UpdateSelect()
 
     SelectMenu oldSelect = m_Select;
 
-    if (GetAsyncKeyState(VK_UP) & 0x8000)
+    if (GetAsyncKeyState(VK_DOWN) & 0x8000)
     {
         if (m_InputTimer >= 0.2f)
         {
-            m_Select = SelectMenu::Start;
+            if (m_Select == SelectMenu::Credit)
+            {
+                m_Select = SelectMenu::End;
+            }
+            else if (m_Select == SelectMenu::Start)
+            {
+                m_Select = SelectMenu::Credit;
+            }
         }
     }
-    else if (GetAsyncKeyState(VK_DOWN) & 0x8000)
+    else if (GetAsyncKeyState(VK_UP) & 0x8000)
     {
         if (m_InputTimer >= 0.2f)
-        {
-            m_Select = SelectMenu::End;
+        {   
+            if (m_Select == SelectMenu::Credit)
+            {
+                m_Select = SelectMenu::Start;
+            }
+            else if (m_Select == SelectMenu::End)
+            {
+                m_Select = SelectMenu::Credit;
+            }
         }
     }
 
@@ -214,29 +253,25 @@ void Title::UpdateSelect()
         if (m_InputTimer >= 0.2f)
         {
             SoundManager::GetInstance()->PlaySE(SoundManager::SE_Enter);
-            if (m_Select == SelectMenu::Start)
+            switch (m_Select)
             {
+            case SelectMenu::Start:
                 m_State = TitleState::FadeOut;
                 m_FadeAlpha = 0.0f;
-            }
-            else
-            {
+                break;
+
+            case SelectMenu::Credit:
+                // クレジットシーンへ.
+                SceneManager::GetInstance()->LoadScene(SceneManager::CCredit);
+                break;
+
+            case SelectMenu::End:
+                // アプリケーション終了.
                 PostQuitMessage(0);
+                break;
             }
             m_InputTimer = 0.0f;
         }
-    }
-
-
-    if (m_Select == SelectMenu::Start)
-    {
-        m_StartPos = { 550.f, 550.f, 0.f };
-        m_EndPos = { 550.f, 650.f, 0.f };
-    }
-    else
-    {
-        m_StartPos = { 550.f, 550.f, 0.f };
-        m_EndPos = { 550.f, 650.f, 0.f };
     }
 
 }
