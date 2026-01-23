@@ -30,3 +30,18 @@ void Wall::Draw()
 {
 	StaticMeshObject::Draw();
 }
+
+D3DXVECTOR3& Wall::GetEditablePos()
+{
+	return m_Position;
+}
+
+D3DXVECTOR3& Wall::GetEditableScale()
+{
+	return m_Scale;
+}
+
+D3DXVECTOR3& Wall::GetEditableRotation()
+{
+	return m_Rotation;
+}
