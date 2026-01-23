@@ -260,6 +260,7 @@
     <ClCompile Include="Source\System\00_Manager\06_CollisionManager\CollisionManager.cpp" />
     <ClCompile Include="Source\System\00_Manager\07_PlayerAttackManager\PlayerAttackManager.cpp" />
     <ClCompile Include="Source\System\00_Manager\08_InputKeyManager\InputKeyManager.cpp" />
+    <ClCompile Include="Source\System\00_Manager\09_WallManager\WallManager.cpp" />
     <ClCompile Include="Source\System\00_Manager\ManagerBase.cpp" />
     <ClCompile Include="Source\System\01_Renderer\Renderer.cpp" />
     <ClCompile Include="Source\System\02_Singleton\00_Timer\Timer.cpp" />
@@ -356,6 +357,7 @@
     <ClInclude Include="Source\System\00_Manager\06_CollisionManager\CollisionManager.h" />
     <ClInclude Include="Source\System\00_Manager\07_PlayerAttackManager\PlayerAttackManager.h" />
     <ClInclude Include="Source\System\00_Manager\08_InputKeyManager\InputKeyManager.h" />
+    <ClInclude Include="Source\System\00_Manager\09_WallManager\WallManager.h" />
     <ClInclude Include="Source\System\00_Manager\ManagerBase.h" />
     <ClInclude Include="Source\System\01_Renderer\Renderer.h" />
     <ClInclude Include="Source\System\02_Singleton\00_Timer\Timer.h" />
