@@ -6,6 +6,7 @@
 #include <json.hpp>
 
 class Wall;
+class ImGuiManager;
 
 /***************************************************************************************************
 *	ステージの壁を生成するクラス.
@@ -29,8 +30,9 @@ public:
 	void Draw() override;
 	void Create() override;
 	void Release() override;
-
+	//jsonファイルを保存する.
 	void SaveData(const std::string& Path);
+	//jsonファイルの場所を呼ぶ.
 	void LoadData(const std::string& Path);
 
 private:

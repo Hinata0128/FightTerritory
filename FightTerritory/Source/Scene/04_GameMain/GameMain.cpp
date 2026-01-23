@@ -12,6 +12,8 @@
 
 #include "System/02_Singleton/01_Camera/Camera.h"
 
+#include "System/00_Manager/09_WallManager/WallManager.h"
+
 GameMain::GameMain()
 	: SceneBase()
 	, m_pStcMeshObj(std::make_unique<StaticMeshObject>())
@@ -41,8 +43,6 @@ GameMain::GameMain()
 
 	, m_PortalFrame(std::make_unique<PortalFrame>())
 	
-	, m_pWall(std::make_unique<Wall>())
-
 	, m_PlayerRespawnTimer(0.0f)
 	, m_BossRespawnTimer(0.0f)
 {
@@ -94,6 +94,8 @@ void GameMain::Create()
 
 	m_pLimitTime->Create();
 	m_Font->Create();
+
+	WallManager::GetInstance()->Create();
 
 
 	BossShotManager::GetInstance()->Init();
@@ -194,6 +196,9 @@ void GameMain::Update()
 	auto playerShotMgr = PShotManager::GetInstance();
 	auto enemyShotMgr = BossShotManager::GetInstance();
 
+	WallManager::GetInstance()->Update();
+
+
 	if (m_pPlayer && m_pPlayer->IsVisible())
 	{
 		m_pCollisionManager->SetPlayer(m_pPlayer); // shared_ptr を渡す
@@ -249,8 +254,6 @@ void GameMain::Update()
 
 	//ポータルの更新（ここで100%判定とシーン遷移が行われる）
 	m_pPortal->Update();
-
-	m_pWall->Update();
 
 	if (m_pPortal->IsReadyToLoad())
 	{
@@ -326,7 +329,7 @@ void GameMain::Draw()
 	Effect::GetInstance()->Draw();
 	m_PortalFrame->Draw();
 
-	m_pWall->Draw();
+	WallManager::GetInstance()->Draw();
 
 	m_pHpBar->Draw();
 	m_pBossHpBar->Draw();
