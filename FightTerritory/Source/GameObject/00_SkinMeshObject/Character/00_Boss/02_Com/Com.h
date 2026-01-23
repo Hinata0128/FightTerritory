@@ -64,6 +64,12 @@ private:
 #pragma region PlayerAttackFunction
 	//優先度2: 攻撃(通常時).
 	void PlayerAttack();
+	//優先度2: Easyモードの攻撃.
+
+	//優先度2: Hardモードの攻撃.
+
+	//優先度2: Finalモードの攻撃.
+
 	//攻撃(プレイヤーが取得している).
 	//ToDo : プレイヤーがポータルを取得している時に入れる攻撃用の関数.
 	void PlayerPressureAttack();
