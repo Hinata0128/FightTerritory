@@ -316,6 +316,18 @@ void Com::PlayerAttack()
 	m_pOwner->RequestShot();
 }
 
+void Com::PlayerAttackEasy()
+{
+}
+
+void Com::PlayerAttackHard()
+{
+}
+
+void Com::PlayerAttackFinal()
+{
+}
+
 void Com::PlayerPressureAttack()
 {
 	const float IDEAL_DISTANCE = 10.0f;
