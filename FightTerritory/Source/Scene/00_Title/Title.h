@@ -14,6 +14,7 @@ public:
     enum class SelectMenu : byte
     {
         Start,
+        Credit,
         End
     };
 
