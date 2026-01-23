@@ -55,7 +55,7 @@ void WallManager::Draw()
 				ImGui::End();
 				return;
 			}
-			//GameObjectクラスの座標を取得して編集する.
+			//GameObjectクラスの座標・サイズ・向きを取得して編集する.
 			//位置の変更をする.
 			D3DXVECTOR3 Pos = m_Wall[i]->GetPosition();
 			if (ImGui::DragFloat3("Positon", (float*)&Pos, 0.1f))
@@ -66,6 +66,11 @@ void WallManager::Draw()
 			if (ImGui::DragFloat3("Scale", (float*)&Scale, 0.1f))
 			{
 				m_Wall[i]->SetScale(Scale);
+			}
+			D3DXVECTOR3 Rot = m_Wall[i]->GetRotation();
+			if (ImGui::DragFloat3("Rotation", (float*)&Rot, 0.1f))
+			{
+				m_Wall[i]->SetRotation(Rot);
 			}
 			ImGui::TreePop();
 		}
