@@ -55,17 +55,34 @@ private:
 
 	//優先度1: ポータルへの移動関数.
 	void MoveToPortal();
+
+//---------------------------------------------------------------
+// 	   攻撃時の関数.
+// 	   ToDo : プレイヤーがポータルを取得している時にボスがとる攻撃.
+//			　難易度で攻撃する内容が変わる.
+//---------------------------------------------------------------
+#pragma region PlayerAttackFunction
 	//優先度2: 攻撃(通常時).
 	void PlayerAttack();
 	//攻撃(プレイヤーが取得している).
 	//ToDo : プレイヤーがポータルを取得している時に入れる攻撃用の関数.
 	void PlayerPressureAttack();
+#pragma endregion
+
+
+//---------------------------------------------------------------
+// 	   防衛の関数.
+// 	   ToDo : ボスがポータルを取得している時にとる行動.
+//			　難易度で防衛する内容が変わる.
+//---------------------------------------------------------------
+ #pragma region DefenseFunction
 	//優先度2: 防衛(Easyモードの時).
 	void DefenseEasy();
 	//優先度2: 防衛(Hardモードの時).
 	void DefenseHard();
 	//優先度2: 防衛(Finalモードの時).
 	void DefenseFinal();
+#pragma endregion
 
 private:
 	std::shared_ptr<Portal> m_pPortal;
