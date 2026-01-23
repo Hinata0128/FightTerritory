@@ -1,4 +1,4 @@
-#include "PlayerMove.h"
+ï»¿#include "PlayerMove.h"
 
 #include "..//..//Player.h"
 #include "..//..//PlayerContext/PlayerContext.h"
@@ -7,11 +7,11 @@
 
 #include "Sound/SoundManager.h"
 
-//ƒ[ƒJƒ‹•Ï”.
+//ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ•°.
 constexpr float zero = 0.0f;
 constexpr float add_value = 0.1f;
 
-//ƒeƒXƒgbranchì¬‚µ‚Ü‚µ‚½
+//ãƒ†ã‚¹ãƒˆbranchä½œæˆã—ã¾ã—ãŸ
 
 PlayerMove::PlayerMove(Player* pOwner)
     : PlayerState   (pOwner)
@@ -20,7 +20,7 @@ PlayerMove::PlayerMove(Player* pOwner)
     , Move          (enMove::Idol)
     , m_Key         (std::make_unique<InputKeyManager>())
 {
-    //‰Šú‰»‚ğ‘‚¢‚Ä‚¢‚é.
+    //åˆæœŸåŒ–ã‚’æ›¸ã„ã¦ã„ã‚‹.
     Init();
 }
 
@@ -38,7 +38,7 @@ void PlayerMove::Update()
     PlayerContext ctx(m_pOwner);
 
     float deltaTime = Timer::GetInstance().DeltaTime();
-    //‰EƒNƒŠƒbƒN‚ÌUŒ‚‚ÌŠÖ”.
+    //å³ã‚¯ãƒªãƒƒã‚¯ã®æ”»æ’ƒã®é–¢æ•°.
     if (LStep == enLeftStep::none)
     {
         RbuttonAttackStep(ctx);
@@ -49,28 +49,28 @@ void PlayerMove::Update()
         LButtonAttackStep(ctx);
     }
     bool LAttacking = IsLAttacking;
-    //WASD‚Ì“ü—Íæ“¾.
+    //WASDã®å…¥åŠ›å–å¾—.
     Move = GetMoveInput();
 
-    //Player‚ÌWASD‚Ì“®ì‚ğ‚³‚¹‚é‚½‚ß‚ÌŠÖ”.
+    //Playerã®WASDã®å‹•ä½œã‚’ã•ã›ã‚‹ãŸã‚ã®é–¢æ•°.
     D3DXVECTOR3 ForwardAndBackward = m_pOwner->Player_WS(ctx.Rotation.y);
     D3DXVECTOR3 LeftAndRight = m_pOwner->Player_AD(ctx.Rotation.y);
 
     m_Key->Update();
 
-    //Player‚ÌˆÚ“®ˆ—.
-    //‘æˆêˆø”‚ÉPlayerContext.
-    //‘æ“ñˆø”‚ÉWS‚ÌŠÖ”.
-    //‘æOˆø”‚ÉAD‚ÌŠÖ”.
+    //Playerã®ç§»å‹•å‡¦ç†.
+    //ç¬¬ä¸€å¼•æ•°ã«PlayerContext.
+    //ç¬¬äºŒå¼•æ•°ã«WSã®é–¢æ•°.
+    //ç¬¬ä¸‰å¼•æ•°ã«ADã®é–¢æ•°.
     HandleMove(ctx, ForwardAndBackward, LeftAndRight);
 
-    //ƒXƒy[ƒXƒL[‚Å‰ñ“]‚ğ‚³‚¹‚é.
+    //ã‚¹ãƒšãƒ¼ã‚¹ã‚­ãƒ¼ã§å›è»¢ã‚’ã•ã›ã‚‹.
     if (m_Key->GetKey("Space") && m_Key->GetKey("Space")->HoldDownKey())
     {
         ctx.Rotation.y += add_value;
     }
 
-    //ƒXƒe[ƒg‚Ì‹¤’Êˆ—.
+    //ã‚¹ãƒ†ãƒ¼ãƒˆã®å…±é€šå‡¦ç†.
     PlayerState::Update();
 }
 
@@ -89,9 +89,9 @@ void PlayerMove::Init()
 {
     PlayerContext ctx(m_pOwner);
 
-    // ‘S‚Ä‚ÌUŒ‚ó‘Ô‚ğ‹­§“I‚É none ‚É‚·‚é
-    step = enStep::none;      // ‰“‹——£ƒŠƒZƒbƒg
-    LStep = enLeftStep::none; // ‹ß‹——£ƒŠƒZƒbƒg
+    // å…¨ã¦ã®æ”»æ’ƒçŠ¶æ…‹ã‚’å¼·åˆ¶çš„ã« none ã«ã™ã‚‹
+    step = enStep::none;      // é è·é›¢ãƒªã‚»ãƒƒãƒˆ
+    LStep = enLeftStep::none; // è¿‘è·é›¢ãƒªã‚»ãƒƒãƒˆ
 
     IsRAttacking = false;
     IsLAttacking = false;
@@ -99,13 +99,13 @@ void PlayerMove::Init()
     ctx.AnimTime = 0.0f;
     m_IsShot = false;
 
-    // UŒ‚ƒ^ƒCƒv‚àƒŠƒZƒbƒg
+    // æ”»æ’ƒã‚¿ã‚¤ãƒ—ã‚‚ãƒªã‚»ãƒƒãƒˆ
     m_pOwner->ChangeAttackType(PlayerAttackManager::enAttack::NoAttack);
 
     PlayerState::Init();
 }
 
-//‰EƒNƒŠƒbƒN‚Ì‰“‹——£UŒ‚.
+//å³ã‚¯ãƒªãƒƒã‚¯ã®é è·é›¢æ”»æ’ƒ.
 void PlayerMove::RbuttonAttackStep(PlayerContext& ctx)
 {
     float deltaTime = Timer::GetInstance().DeltaTime();
@@ -121,7 +121,7 @@ void PlayerMove::RbuttonAttackStep(PlayerContext& ctx)
         return;
     }
 
-    // ‰EƒNƒŠƒbƒN‰Ÿ‚³‚ê‚½‚ç‰ŠúƒXƒeƒbƒv‚Ö
+    // å³ã‚¯ãƒªãƒƒã‚¯æŠ¼ã•ã‚ŒãŸã‚‰åˆæœŸã‚¹ãƒ†ãƒƒãƒ—ã¸
     if (GetAsyncKeyState(VK_RBUTTON) & 0x8000)
     {
         if (step == enStep::none)
@@ -135,19 +135,19 @@ void PlayerMove::RbuttonAttackStep(PlayerContext& ctx)
     {
         case enStep::none:
             IsRAttacking = false;
-            break; //UŒ‚‚µ‚Ä‚¢‚È‚¢¨ˆÚ“®ˆ—‚ÉˆÚ“®.
+            break; //æ”»æ’ƒã—ã¦ã„ãªã„â†’ç§»å‹•å‡¦ç†ã«ç§»å‹•.
         case enStep::first:
-            //ƒAƒjƒ[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦.
-            ctx.AnimNo = 8; //ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†.
-            ctx.AnimTime = 0.0f;    //ƒAƒjƒ[ƒVƒ‡ƒ“ƒ^ƒCƒ}[‚Ì‰Šú‰».
+            //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åˆ‡ã‚Šæ›¿ãˆ.
+            ctx.AnimNo = 8; //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·.
+            ctx.AnimTime = 0.0f;    //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚¿ã‚¤ãƒãƒ¼ã®åˆæœŸåŒ–.
             m_IsShot = false;
             ctx.Mesh->SetAnimSpeed(ctx.AnimSpeed, ctx.AnimCtrl);
-            ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);//ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì•ÏX.
+            ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);//ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å¤‰æ›´.
             step = enStep::run;
             break;
         case enStep::run:
         
-            //ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì’â~‚ğ—Ç‚¢ˆÊ’u‚Å‚³‚¹‚é‚½‚ß.
+            //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åœæ­¢ã‚’è‰¯ã„ä½ç½®ã§ã•ã›ã‚‹ãŸã‚.
             if (ctx.AnimTime > ctx.Mesh->GetAnimPeriod(6))
             {
                 step = enStep::end;
@@ -160,7 +160,7 @@ void PlayerMove::RbuttonAttackStep(PlayerContext& ctx)
         
         case enStep::end:
         {
-            //ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì’â~.
+            //ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åœæ­¢.
             ctx.Mesh->SetAnimSpeed(0.0f, ctx.AnimCtrl);
             m_pOwner->ChangeAttackType(PlayerAttackManager::enAttack::Long);
             if (!(GetAsyncKeyState(VK_RBUTTON) & 0x8000))
@@ -186,7 +186,7 @@ void PlayerMove::RbuttonAttackStep(PlayerContext& ctx)
     }
 }
 
-// ¶ƒNƒŠƒbƒN‚ğ‰Ÿ‚µ‚½‚Æ‚«‚Ì‹ß‹——£UŒ‚.
+// å·¦ã‚¯ãƒªãƒƒã‚¯ã‚’æŠ¼ã—ãŸã¨ãã®è¿‘è·é›¢æ”»æ’ƒ.
 void PlayerMove::LButtonAttackStep(PlayerContext& ctx)
 {
     if (ctx.AnimNo == 7)
@@ -198,7 +198,7 @@ void PlayerMove::LButtonAttackStep(PlayerContext& ctx)
         return;
     }
 
-    // ¶ƒNƒŠƒbƒN‚Ì“ü—Í”»’è
+    // å·¦ã‚¯ãƒªãƒƒã‚¯ã®å…¥åŠ›åˆ¤å®š
     if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
     {
         if (LStep == enLeftStep::none)
@@ -216,13 +216,13 @@ void PlayerMove::LButtonAttackStep(PlayerContext& ctx)
 
     case enLeftStep::first:
     {
-        // ƒAƒjƒ[ƒVƒ‡ƒ“Ø‚è‘Ö‚¦B
-        ctx.AnimNo = 6;         // ‹ßÚUŒ‚ƒAƒjƒ[ƒVƒ‡ƒ“”Ô†B
-        ctx.AnimTime = 0.0f;    // ‚±‚±‚Åƒ^ƒCƒ}[‚ğƒŠƒZƒbƒgB
+        // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³åˆ‡ã‚Šæ›¿ãˆã€‚
+        ctx.AnimNo = 6;         // è¿‘æ¥æ”»æ’ƒã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ç•ªå·ã€‚
+        ctx.AnimTime = 0.0f;    // ã“ã“ã§ã‚¿ã‚¤ãƒãƒ¼ã‚’ãƒªã‚»ãƒƒãƒˆã€‚
 
         m_pOwner->ChangeAttackType(PlayerAttackManager::enAttack::Short);
 
-        // ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì•ÏXB
+        // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®å¤‰æ›´ã€‚
         ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
 
         LStep = enLeftStep::Attack;
@@ -233,14 +233,14 @@ void PlayerMove::LButtonAttackStep(PlayerContext& ctx)
     {
         double period = ctx.Mesh->GetAnimPeriod(ctx.AnimNo);
 
-        // ƒAƒjƒ[ƒVƒ‡ƒ“I—¹”»’èB
+        // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³çµ‚äº†åˆ¤å®šã€‚
         if (ctx.AnimTime >= period)
         {
             LStep = enLeftStep::end;
         }
         else
         {
-            // ƒ^ƒCƒ}[‚ğ—İÏB
+            // ã‚¿ã‚¤ãƒãƒ¼ã‚’ç´¯ç©ã€‚
             ctx.AnimTime += ctx.AnimSpeed;
         }
         break;
@@ -248,7 +248,7 @@ void PlayerMove::LButtonAttackStep(PlayerContext& ctx)
 
     case enLeftStep::end:
     {
-        // ƒAƒjƒ[ƒVƒ‡ƒ“‚Ì’â~B
+        // ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã®åœæ­¢ã€‚
         ctx.Mesh->SetAnimSpeed(0.0f, ctx.AnimCtrl);
 
         LStep = enLeftStep::release_anim;
@@ -287,16 +287,16 @@ void PlayerMove::HandleMove(
     D3DXVECTOR3 camForward = cam.GetForward();
     D3DXVECTOR3 camRight = cam.GetRight();
 
-    // ‚’á·iy²j‚Ì‰e‹¿‚ğ–³‹‚µ‚ÄA’n–Ê‚Ì•ûŒü‚¾‚¯‚ğŒvZ
+    // é«˜ä½å·®ï¼ˆyè»¸ï¼‰ã®å½±éŸ¿ã‚’ç„¡è¦–ã—ã¦ã€åœ°é¢ã®æ–¹å‘ã ã‘ã‚’è¨ˆç®—
     camForward.y = 0.0f;
     camRight.y = 0.0f;
     D3DXVec3Normalize(&camForward, &camForward);
     D3DXVec3Normalize(&camRight, &camRight);
 
-    // --- ‡@ –Ú•W‚Æ‚È‚éˆÚ“®•ûŒüƒxƒNƒgƒ‹‚ğ‡¬‚·‚é ---
+    // --- â‘  ç›®æ¨™ã¨ãªã‚‹ç§»å‹•æ–¹å‘ãƒ™ã‚¯ãƒˆãƒ«ã‚’åˆæˆã™ã‚‹ ---
     D3DXVECTOR3 targetDir(0, 0, 0);
 
-    // Œ»İ‚Ì enMove ”»’è‚ğ—˜—p‚µ‚Äi‚İ‚½‚¢•ûŒü‚ğ‡¬
+    // ç¾åœ¨ã® enMove åˆ¤å®šã‚’åˆ©ç”¨ã—ã¦é€²ã¿ãŸã„æ–¹å‘ã‚’åˆæˆ
     switch (Move)
     {
     case enMove::ForWard:          targetDir = camForward; break;
@@ -310,64 +310,64 @@ void PlayerMove::HandleMove(
     default:                       targetDir = D3DXVECTOR3(0, 0, 0); break;
     }
 
-    // --- ‡A ˆÚ“®‚ÆŠŠ‚ç‚©‚È‰ñ“]‚Ìˆ— ---
+    // --- â‘¡ ç§»å‹•ã¨æ»‘ã‚‰ã‹ãªå›è»¢ã®å‡¦ç† ---
     float length = D3DXVec3Length(&targetDir);
 
     if (length > 0.0f)
     {
-        // ƒxƒNƒgƒ‹‚ğ³‹K‰»iÎ‚ßˆÚ“®‚Å‘¬‚­‚È‚ç‚È‚¢‚æ‚¤‚Éj
+        // ãƒ™ã‚¯ãƒˆãƒ«ã‚’æ­£è¦åŒ–ï¼ˆæ–œã‚ç§»å‹•ã§é€Ÿããªã‚‰ãªã„ã‚ˆã†ã«ï¼‰
         D3DXVec3Normalize(&targetDir, &targetDir);
 
-        // À•WXV
+        // åº§æ¨™æ›´æ–°
         ctx.Position += targetDir * add_value;
 
-        // –Ú•W‚ÌŠp“xiƒ‰ƒWƒAƒ“j‚ğZo
+        // ç›®æ¨™ã®è§’åº¦ï¼ˆãƒ©ã‚¸ã‚¢ãƒ³ï¼‰ã‚’ç®—å‡º
         float targetRotationY = atan2f(targetDir.x, targetDir.z);
 
-        // y‚±‚±‚ªƒ|ƒCƒ“ƒgzŒ»İ‚ÌŠp“x‚©‚ç–Ú•WŠp“x‚Ö­‚µ‚¸‚Â‹ß‚Ã‚¯‚é
+        // ã€ã“ã“ãŒãƒã‚¤ãƒ³ãƒˆã€‘ç¾åœ¨ã®è§’åº¦ã‹ã‚‰ç›®æ¨™è§’åº¦ã¸å°‘ã—ãšã¤è¿‘ã¥ã‘ã‚‹
         float diff = targetRotationY - ctx.Rotation.y;
 
-        // 180“xˆÈã‰ñ“]‚µ‚È‚¢‚æ‚¤‚ÉÅ’Zƒ‹[ƒg‚ğŒvZ (-PI ~ PI ‚Ì”ÍˆÍ‚É•â³)
+        // 180åº¦ä»¥ä¸Šå›è»¢ã—ãªã„ã‚ˆã†ã«æœ€çŸ­ãƒ«ãƒ¼ãƒˆã‚’è¨ˆç®— (-PI ~ PI ã®ç¯„å›²ã«è£œæ­£)
         while (diff > D3DX_PI) diff -= D3DX_PI * 2.0f;
         while (diff < -D3DX_PI) diff += D3DX_PI * 2.0f;
 
-        // ‰ñ“]‘¬“xi0.1f ‚È‚ç‚ä‚Á‚­‚èA0.3f ‚È‚ç‘f‘‚­Œü‚­j
+        // å›è»¢é€Ÿåº¦ï¼ˆ0.1f ãªã‚‰ã‚†ã£ãã‚Šã€0.3f ãªã‚‰ç´ æ—©ãå‘ãï¼‰
         float lerpFactor = 0.15f;
         ctx.Rotation.y += diff * lerpFactor;
 
-        // ‘–‚èƒAƒjƒ[ƒVƒ‡ƒ“
+        // èµ°ã‚Šã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
         ctx.AnimNo = 2;
         ctx.AnimTime += ctx.AnimSpeed;
     }
     else
     {
-        // Ã~ƒAƒjƒ[ƒVƒ‡ƒ“
+        // é™æ­¢ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³
         ctx.AnimNo = 0;
         ctx.AnimTime += ctx.AnimSpeed;
     }
 }
 
-//Player‚Ì“®ì[InputKeyManager‚ğg—p‚µ‚Ä]‘‚­ŠÖ”.
+//Playerã®å‹•ä½œ[InputKeyManagerã‚’ä½¿ç”¨ã—ã¦]æ›¸ãé–¢æ•°.
 PlayerMove::enMove PlayerMove::GetMoveInput()
 {
-    // WASD‚Ì“®ì.
+    // WASDã®å‹•ä½œ.
     bool W = (m_Key->GetKey("W") && m_Key->GetKey("W")->HoldDownKey());
     bool A = (m_Key->GetKey("A") && m_Key->GetKey("A")->HoldDownKey());
     bool S = (m_Key->GetKey("S") && m_Key->GetKey("S")->HoldDownKey());
     bool D = (m_Key->GetKey("D") && m_Key->GetKey("D")->HoldDownKey());
 
-    //Î‚ß—Dæ”»’è.
+    //æ–œã‚å„ªå…ˆåˆ¤å®š.
     if (W && D) return enMove::ForWardAAndRight;
     if (W && A) return enMove::ForWardAndLeft;
     if (S && D) return enMove::BackAndRight;
     if (S && A) return enMove::BackAndLeft;
 
-    //’P•ûŒü”»’è.
+    //å˜æ–¹å‘åˆ¤å®š.
     if (W) return enMove::ForWard;
     if (S) return enMove::Back;
     if (A) return enMove::Left;
     if (D) return enMove::Right;
 
-    //‚Ç‚ÌƒL[‚à‰Ÿ‚µ‚Ä‚¢‚È‚¢‚Æ‚«‚ÍA0”Ô–Ú‚ÌƒAƒjƒ[ƒVƒ‡ƒ“‚ğÄ¶.
+    //ã©ã®ã‚­ãƒ¼ã‚‚æŠ¼ã—ã¦ã„ãªã„ã¨ãã¯ã€0ç•ªç›®ã®ã‚¢ãƒ‹ãƒ¡ãƒ¼ã‚·ãƒ§ãƒ³ã‚’å†ç”Ÿ.
     return enMove::Idol;
 }
