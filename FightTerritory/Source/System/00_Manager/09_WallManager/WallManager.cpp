@@ -58,17 +58,17 @@ void WallManager::Draw()
 			//GameObjectクラスの座標・サイズ・向きを取得して編集する.
 			//位置の変更をする.
 			D3DXVECTOR3 Pos = m_Wall[i]->GetPosition();
-			if (ImGui::DragFloat3("Positon", (float*)&Pos, 0.1f))
+			if (ImGui::SliderFloat3("Positon", (float*)&Pos, -100.0f, 100.0f))
 			{
 				m_Wall[i]->SetPosition(Pos);
 			}
 			D3DXVECTOR3 Scale = m_Wall[i]->GetScale();
-			if (ImGui::DragFloat3("Scale", (float*)&Scale, 0.1f))
+			if (ImGui::SliderFloat3("Scale", (float*)&Scale, -100.0f, 100.0f))
 			{
 				m_Wall[i]->SetScale(Scale);
 			}
 			D3DXVECTOR3 Rot = m_Wall[i]->GetRotation();
-			if (ImGui::DragFloat3("Rotation", (float*)&Rot, 0.1f))
+			if (ImGui::SliderFloat3("Rotation", (float*)&Rot, -360.0f, 360.0f))
 			{
 				m_Wall[i]->SetRotation(Rot);
 			}
