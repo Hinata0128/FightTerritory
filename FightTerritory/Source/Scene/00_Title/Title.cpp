@@ -136,14 +136,16 @@ void Title::Update()
         break;
     }
 
+#ifdef _DEBUG
     if (GetAsyncKeyState(VK_SPACE) & 0x0001)
     {
         SceneManager::GetInstance()->LoadScene(SceneManager::Lose);
     }
     if (GetAsyncKeyState('A') & 0x0001)
     {
-        SceneManager::GetInstance()->LoadScene(SceneManager::CCredit);
+        SceneManager::GetInstance()->LoadScene(SceneManager::Win);
     }
+#endif
 }
 
 void Title::Draw()
