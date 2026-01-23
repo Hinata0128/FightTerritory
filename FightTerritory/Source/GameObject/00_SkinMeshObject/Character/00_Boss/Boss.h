@@ -1,9 +1,10 @@
 #pragma once
-#include "GameObject/00_SkinMeshObject/Character/Character.h"
-#include "Collision/BoundingSphere/BoundingSphere.h" 
+#include "GameObject//00_SkinMeshObject//Character//Character.h"
+#include "Collision//BoundingSphere//BoundingSphere.h" 
 
-#include "..//00_Boss/01_BossStateBase/00_BossIdol/BossIdol.h"
-#include "..//00_Boss/01_BossStateBase/02_BossDead/BossDead.h"
+#include "..//00_Boss//01_BossStateBase//00_BossIdol//BossIdol.h"
+#include "..//00_Boss//01_BossStateBase//02_BossDead//BossDead.h"
+#include "..//00_Boss//01_BossStateBase//03_BossPortalAnim//BossPortalAnim.h"
 
 class BossShotManager;
 class Timer;
@@ -14,7 +15,7 @@ class Com;
 
 class Shadow;
 
-#include "GameObject/02_StaticMeshObject/01_Portal/Portal.h"
+#include "GameObject//02_StaticMeshObject//01_Portal//Portal.h"
 
 
 
@@ -90,6 +91,7 @@ public:
 	//publicでStateの遷移をしている.
 	std::unique_ptr<BossIdol> m_pIdol;
 	std::unique_ptr<BossDead> m_pDead;
+	std::unique_ptr<BossPortalAnim> m_pBossAnim;
 
 	void SetTargetDead(bool isDead)		{ m_IsTargetDead = isDead; }
 	bool IsTargetDead() const			{ return m_IsTargetDead; }
@@ -101,6 +103,11 @@ public:
 	bool IsFrozen() const				{ return m_IsFrozen; }
 
 	Shadow* GetShadow() const { return m_pShadow.get(); }
+
+	//ポータルアニメーション用関数.
+	//ToDo : ボスのポータル取得アニメーションを再生する.
+	void SetCaptureState(float duration);
+	bool IsCapturingState() const;
 private:
 	BossShotManager* m_pENShotManager;
 
@@ -134,4 +141,8 @@ private:
 
 	std::shared_ptr<Shadow> m_pShadow;
 	std::unique_ptr<Player> m_pPlayer;
+
+	//ポータル取得演出の残り時間.
+	float m_CaptureTimer;
+
 };

@@ -340,6 +340,10 @@ void Portal::ChackPriority()
 	{
 		if (m_pPortalState != PortalPriority::Enemy)
 		{
+			if (auto enemy = m_pEnemy.lock())
+			{
+				enemy->SetCaptureState(2.0f);
+			}
 			m_FirstEnterPriority = PortalPriority::Enemy;
 			SoundManager::GetInstance()->PlaySE(SoundManager::SE_PortalGet);
 		}

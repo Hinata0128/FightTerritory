@@ -9,6 +9,7 @@
 
 class Boss;
 class BossContext;
+class BossShotManager;
 
 class BossPortalAnim final
 	: public BossStateBase
@@ -26,7 +27,6 @@ public:
 
 	void Draw() override;
 	void Init() override;
-
 
 private:
 

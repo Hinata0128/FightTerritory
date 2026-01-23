@@ -17,7 +17,7 @@ PlayerPortalAnim::~PlayerPortalAnim()
 void PlayerPortalAnim::Enter()
 {
     PlayerContext ctx(m_pOwner);
-    //仮のアニメーション番号.
+
     ctx.AnimNo = 7; // ポータル取得アニメーションの番号
     ctx.AnimTime = 0.0f;
 

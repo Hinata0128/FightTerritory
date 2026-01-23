@@ -16,8 +16,11 @@ constexpr float zero = 0.0f;
 Boss::Boss(std::shared_ptr<Portal> pPortal)
     : Character()
     , m_pENShotManager(nullptr)
+    
     , m_pIdol(std::make_unique<BossIdol>(this))
     , m_pDead(std::make_unique<BossDead>(this))
+    , m_pBossAnim(std::make_unique<BossPortalAnim>(this))
+
     , m_pCom(std::make_unique<Com>(this, pPortal))
     
     , m_InitialPosition {}
@@ -31,7 +34,10 @@ Boss::Boss(std::shared_ptr<Portal> pPortal)
     , m_pShadow     ( std::make_shared<Shadow>() )
     , m_pPlayer     ( std::make_unique<Player>() )
     , m_CoolTime(1.0f)       
-    , m_ShotCoolDown(0.0f)   
+    , m_ShotCoolDown(0.0f)  
+
+    , m_CaptureTimer(0.0f)
+
 {
     SkinMesh* raw_mesh = SkinMeshManager::GetInstance()->GetSkinMeshInstance(SkinMeshManager::SkinList::Enemy);
     auto shared_mesh = std::shared_ptr<SkinMesh>(raw_mesh, [](SkinMesh*) {});
@@ -107,6 +113,29 @@ void Boss::Update()
     }
 
     m_pENShotManager->Update();
+
+    //ポータル取得アニメーションを再生させる.
+    if (IsCapturingState())
+    {
+        //タイマーの更新.
+        m_CaptureTimer -= Timer::GetInstance().DeltaTime();
+        if (m_CaptureTimer <= 0.0f)
+        {
+            //タイマー終了 : StateをIdolに戻す.
+            BossStateBase* nextState = m_pIdol.get();
+            if (m_pCurrentState)
+            {
+                m_pCurrentState->Exit();
+            }
+            m_pCurrentState = nextState;
+            if (m_pCurrentState)
+            {
+                m_pCurrentState->Enter();
+            }
+            m_CaptureTimer = 0.0f;
+        }
+        return;
+    }
 
     // クールタイム
     m_ShotCoolDown -= deltaTime;
@@ -216,6 +245,8 @@ void Boss::Respawn()
 
     SetVisible(true);
 
+    m_CaptureTimer = 0.0f;
+
     Init();
 }
 
@@ -267,6 +298,34 @@ void Boss::AutoShot()
         D3DXVec3Normalize(&finalDir, &finalDir);
         m_pENShotManager->AddEnemyNomalShot(shotPos, finalDir);
     }
+}
+
+void Boss::SetCaptureState(float duration)
+{
+    BossStateBase* nextState = m_pBossAnim.get();
+    if (m_pCurrentState == nextState)
+    {
+        return;
+    }
+
+    //タイマーをセット.
+    m_CaptureTimer = duration;
+
+    if (m_pCurrentState)
+    {
+        m_pCurrentState->Exit();    //古いステートの終了処理.
+    }
+    m_pCurrentState = nextState;    //ステートをBossPortalAnimに切り替える.
+    if (m_pCurrentState)
+    {
+        //ToDo : ボスのポータル取得アニメーションクラスに入ってアニメーションの再生をさせる.
+        m_pCurrentState->Enter();   //新しいステートの開始.
+    }
+}
+
+bool Boss::IsCapturingState() const
+{
+    return m_pCurrentState == m_pBossAnim.get();
 }
 
 D3DXVECTOR3 Boss::GetHitCenter() const
