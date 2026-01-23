@@ -97,12 +97,14 @@ void Com::DecideDifficultyByRound(int raund)
 {
 	int Raund = rand() % 100;
 #if 1
+
+	//ToDo : 確認用のためラウンド1でボスのモードをHardで固定します
 	if (raund == 1)
 	{
 		//9割りEasyモード.
 		if (Raund < 90)
 		{
-			SetDifficulty(BossDifficulty::Easy);
+			SetDifficulty(BossDifficulty::Hard);
 		}
 		//残りHardモード.
 		else
@@ -245,9 +247,18 @@ void Com::DecideAction()
 	// 自分の陣地を守るための防衛行動に切り替える
 	if (state == Portal::PortalPriority::Enemy)
 	{
-		m_pOwner->SetShotInterval(m_ShotInterval);
-		DefenseFinal();
-		return;
+		if (m_Difficulty == BossDifficulty::Easy)
+		{
+			m_pOwner->SetShotInterval(m_ShotInterval);
+			DefenseEasy();
+			return;
+		}
+		if (m_Difficulty == BossDifficulty::Hard)
+		{
+			m_pOwner->SetShotInterval(m_ShotInterval);
+			DefenseHard();
+			return;
+		}
 	}
 }
 
@@ -454,7 +465,7 @@ void Com::DefenseHard()
 	D3DXVECTOR3 horizontalVelocity = Tangent * (m_MoveSpeed * rotationSpeedRate);
 
 	//ジグザグの調整
-	float zigzagFrequency = 2.0f;   //揺れる周期（速さ）
+	float zigzagFrequency = 6.0f;   //揺れる周期(一周で揺れる回数)
 	float zigzagAmplitude = 1.5f;   //揺れる幅
 	float Wave = sinf(totalTime * zigzagFrequency) * zigzagAmplitude;
 
@@ -511,10 +522,6 @@ void Com::DefenseFinal()
 	D3DXVECTOR3 Tangent;
 	D3DXVec3Cross(&Tangent, &Up, &ToBoss);
 
-	// --- ★難易度アップの仕掛け：二重サイン波とカオス移動 ---
-
-	// A. 複雑な軌道（円運動に「うねり」を加える）
-	// 二つの異なる周期のサイン波を合成して、移動パターンを読ませない
 	float waveA = sinf(totalTime * 3.5f) * 2.0f;
 	float waveB = cosf(totalTime * 7.0f) * 1.5f;
 	float finalWave = waveA + waveB;
