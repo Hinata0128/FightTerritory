@@ -21,7 +21,6 @@ Boss::Boss(std::shared_ptr<Portal> pPortal)
     , m_pDead(std::make_unique<BossDead>(this))
     , m_pBossAnim(std::make_unique<BossPortalAnim>(this))
 
-    , m_pCom(std::make_unique<Com>(this, pPortal))
     
     , m_InitialPosition {}
 
@@ -79,10 +78,6 @@ void Boss::Init()
 
     int score = SceneManager::GetInstance()->GetPlayerScore() + SceneManager::GetInstance()->GetEnemyScore();
     m_CurrentRound = score + 1;
-
-    if (m_pCom)
-    {
-    }
 
     //待機アニメーションを再生.
     const int IDLE_ANIM = 0;

@@ -4,7 +4,7 @@
 class Boss;
 class BossContext;
 
-class Com;
+//class Com;
 
 /*****************************************************************
 *	NomalIdolClass(“G‚ÌƒAƒCƒhƒ‹ó‘Ô).
