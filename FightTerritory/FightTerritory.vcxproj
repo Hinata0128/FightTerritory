@@ -96,7 +96,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -138,7 +138,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -159,7 +159,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -440,7 +440,17 @@
     <Font Include="Data\ImGui\Font\ariblk.ttf" />
     <Font Include="Data\ImGui\Font\NotoSansJP-SemiBold.ttf" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets" Condition="Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" />
   </ImportGroup>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>このプロジェクトは、このコンピューター上にない NuGet パッケージを参照しています。それらのパッケージをダウンロードするには、[NuGet パッケージの復元] を使用します。詳細については、http://go.microsoft.com/fwlink/?LinkID=322105 を参照してください。見つからないファイルは {0} です。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\nlohmann.json.3.12.0\build\native\nlohmann.json.targets'))" />
+  </Target>
 </Project>
