@@ -11,7 +11,6 @@ class Timer;
 class BossContext;
 class BossStateBase;
 
-class Com;
 
 class Shadow;
 
@@ -24,7 +23,6 @@ class Boss final
 {
 public:
 	friend BossContext;
-	friend Com;
 public:
 	enum class BossDifficulty : byte
 	{
@@ -130,8 +128,25 @@ private:
 	//決定アクション.
 	void DecideAction();
 
+//-----------------------------------------------------------------------
+//		ボスの行動関数.
+// 	    ToDo : ボスがポータルへすすむようにする関数. 
+//-----------------------------------------------------------------------
 	//ポータルへボスが進む.
 	void MoveToPortal();
+
+	//ポータルへの移動/Easy.
+	void PortalMoveEasy();
+	//ポータルへの移動/Hard.
+	void PortalMoveHard();
+	//ポータルへの移動/Final.
+	void PortalMoveFinal();
+
+//-----------------------------------------------------------------------
+// 		攻撃関数.
+//		ToDo : ボスの攻撃関数.
+//			　 難易度で攻撃をする動作が変わる.
+//-----------------------------------------------------------------------
 
 private:
 	BossShotManager* m_pENShotManager;
@@ -147,7 +162,6 @@ private:
 	//時間がなかったのでここで初期化をしている.
 	BossStateBase* m_pCurrentState = nullptr;
 
-	std::unique_ptr<Com> m_pCom;
 
 	D3DXVECTOR3 m_InitialPosition;
 	//現在のラウンド数(開始は1から).

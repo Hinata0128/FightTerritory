@@ -5,7 +5,6 @@
 
 #include "System/02_Singleton/00_Timer/Timer.h"
 
-#include "GameObject/00_SkinMeshObject/Character//00_Boss/02_Com/Com.h"
 
 BossIdol::BossIdol(Boss* pOwner)
 	: BossStateBase(pOwner)
