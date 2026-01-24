@@ -66,8 +66,6 @@ Boss::Boss(std::shared_ptr<Portal> pPortal)
     m_BSphere.SetRadius(1.0f);
     m_HitCenterOffset = D3DXVECTOR3(0.0f, 3.5f, 0.0f);
 
-    m_pCom->DecideDifficultyByRound(m_CurrentRound);
-
     Init();
 }
 
@@ -84,7 +82,6 @@ void Boss::Init()
 
     if (m_pCom)
     {
-        m_pCom->DecideDifficultyByRound(m_CurrentRound);
     }
 
     //待機アニメーションを再生.
@@ -164,7 +161,6 @@ void Boss::Draw()
     m_pMesh->SetAnimSpeed(m_AnimSpeed);
     m_pShadow->Draw();
     Character::Draw();
-    m_pCom->DrawDebugImGui();
 }
 
 void Boss::Hit()
@@ -215,11 +211,6 @@ void Boss::StartNextRound(int nextround)
 {
     m_CurrentRound = nextround;
 
-    //Comクラスに次のラウンドを知らせる.
-    if (m_pCom)
-    {
-        m_pCom->DecideDifficultyByRound(m_CurrentRound);
-    }
     Respawn();
 }
 
@@ -250,6 +241,12 @@ void Boss::Respawn()
 
     Init();
 }
+
+D3DXVECTOR3 Boss::GetHitCenter() const
+{
+    return m_Position + m_HitCenterOffset;
+}
+
 
 void Boss::ChangeState(BossStateBase* state)
 {
@@ -329,7 +326,14 @@ bool Boss::IsCapturingState() const
     return m_pCurrentState == m_pBossAnim.get();
 }
 
-D3DXVECTOR3 Boss::GetHitCenter() const
+void Boss::DecideDifficltyByRound(float raudo)
 {
-    return m_Position + m_HitCenterOffset;
+}
+
+void Boss::SetDifficulty(BossDifficulty diff)
+{
+}
+
+void Boss::ApplyDifficultyParam()
+{
 }
