@@ -26,6 +26,13 @@ public:
 	friend BossContext;
 	friend Com;
 public:
+	enum class BossDifficulty : byte
+	{
+		Easy,
+		Hard,
+		Final
+	};
+public:
 	Boss(std::shared_ptr<Portal> pPortal);
 	~Boss() override;
 
@@ -108,6 +115,24 @@ public:
 	//ToDo : ボスのポータル取得アニメーションを再生する.
 	void SetCaptureState(float duration);
 	bool IsCapturingState() const;
+public:
+	//ラウンドごとに難易度を設定.
+	//ToDo : ボスの強さ設定をする.
+	void DecideDifficltyByRound(float raudo);
+
+public:
+	//難易度用のSet関数.
+	void SetDifficulty(BossDifficulty diff);
+	//難易度を反映させる.
+	void ApplyDifficultyParam();
+
+private:
+	//決定アクション.
+	void DecideAction();
+
+	//ポータルへボスが進む.
+	void MoveToPortal();
+
 private:
 	BossShotManager* m_pENShotManager;
 
