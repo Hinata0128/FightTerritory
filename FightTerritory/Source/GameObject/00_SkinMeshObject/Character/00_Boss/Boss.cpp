@@ -321,8 +321,42 @@ bool Boss::IsCapturingState() const
     return m_pCurrentState == m_pBossAnim.get();
 }
 
-void Boss::DecideDifficltyByRound(float raudo)
+//ラウンドごとに難易度を設定.
+void Boss::DecideDifficltyByRound(float raund)
 {
+    //確率を使用して難易度を設定させる.
+    int Raund = rand() % 100;
+
+    //ラウンドごとに難易度を設定.
+    //1ラウンド目.
+    if (raund == 1)
+    {
+        if (Raund < 90)
+        {
+            SetDifficulty(BossDifficulty::Easy);
+        }
+        else
+        {
+            SetDifficulty(BossDifficulty::Hard);
+        }
+    }
+    //2ラウンド目.
+    else if (raund == 2)
+    {
+        if (Raund < 70)
+        {
+            SetDifficulty(BossDifficulty::Hard);
+        }
+        else
+        {
+            SetDifficulty(BossDifficulty::Easy);
+        }
+    }
+    //3ラウンド目.
+    else if (raund == 3)
+    {
+        SetDifficulty(BossDifficulty::Final);
+    }
 }
 
 void Boss::SetDifficulty(BossDifficulty diff)

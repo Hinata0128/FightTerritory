@@ -116,7 +116,7 @@ public:
 public:
 	//ラウンドごとに難易度を設定.
 	//ToDo : ボスの強さ設定をする.
-	void DecideDifficltyByRound(float raudo);
+	void DecideDifficltyByRound(float raund);
 
 public:
 	//難易度用のSet関数.
