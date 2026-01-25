@@ -359,10 +359,7 @@ void PlayerMove::HandleMove(
     else {
         ApplyMoveAnimation(0); // アイドルアニメーション
     }
-
     ctx.AnimTime += ctx.AnimSpeed;
-
-
 }
 
 //Playerの動作[InputKeyManagerを使用して]書く関数.
