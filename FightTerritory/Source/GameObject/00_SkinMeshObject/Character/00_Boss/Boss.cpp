@@ -595,6 +595,10 @@ void Boss::PortalMoveEasy()
 
 void Boss::PortalMoveHard()
 {
+    float deltaTime = Timer::GetInstance().DeltaTime();
+    m_MoveTimer += deltaTime;
+
+
 }
 
 void Boss::PortalMoveFinal()
