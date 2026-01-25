@@ -53,6 +53,8 @@ Boss::Boss(std::shared_ptr<Portal> pPortal)
 
     , m_pPortal     (pPortal)
 
+    , m_MoveTimer(0.0f)
+
 {
     SkinMesh* raw_mesh = SkinMeshManager::GetInstance()->GetSkinMeshInstance(SkinMeshManager::SkinList::Enemy);
     auto shared_mesh = std::shared_ptr<SkinMesh>(raw_mesh, [](SkinMesh*) {});
@@ -157,7 +159,7 @@ void Boss::Update()
     if (!IsDaed())
     {
         //ToDo : 壁の配置をするためボスは今動かないようにしておく.
-        //m_pCom->Update();
+        DecideAction();
     }
 
     // ボーン座標取得
@@ -500,10 +502,13 @@ void Boss::DecideAction()
     }
 }
 
+//ボスがポータルへ歩く接続用の関数.
 void Boss::MoveToPortal()
 {
     //Todo : 移動中も攻撃のインターバルを設定しておく[いらなくなったら消す].
     SetShotInterval(m_ShotInterval);
+    //jsonから読み込まれたしそれぞれの難易度のボスの速度を代入.
+    float Speed = m_MoveSpeed;
 
     //ボスのラウンドの状態でどのように動くのかを設定.
     switch (m_Difficulty)
@@ -522,8 +527,70 @@ void Boss::MoveToPortal()
     }
 }
 
+//ポータルへの距離の取得用関数.
+void Boss::PortalMoveSpeedBasic(D3DXVECTOR3 TargetPos, float Speed)
+{
+    //デルタタイムを取得.
+    float deltaTime = Timer::GetInstance().DeltaTime();
+
+    //ボスの位置を取得.
+    D3DXVECTOR3 BossPos_v = GetPosition();
+    //ターゲットへの距離を求める.
+    D3DXVECTOR3 Dir = TargetPos - BossPos_v;
+    const float Zero = 0.0f;
+    Dir.y = Zero;
+
+    float Dist = D3DXVec3Length(&Dir);
+
+    if (Dist > 0.1f)
+    {
+        D3DXVec3Normalize(&Dir, &Dir);
+        AddPosition(Dir * Speed * deltaTime);
+
+        float Angle = std::atan2f(-Dir.x, -Dir.z);
+        SetRotationY(Angle);
+        //アニメーション番号2.
+        const int WALK_ANIM = 2;
+        if (m_AnimNo != WALK_ANIM)
+        {
+            m_AnimNo = WALK_ANIM;
+            m_pMesh->ChangeAnimSet(WALK_ANIM, m_pAnimCtrl);
+        }
+        m_pMesh->SetAnimSpeed(m_AnimSpeed);
+    }
+}
+
+//ポータルへの移動/Easy.
 void Boss::PortalMoveEasy()
 {
+    //トータル時間を取得.
+    float deltaTime = Timer::GetInstance().DeltaTime();
+
+    m_MoveTimer += deltaTime;
+
+    //4秒超えたら0に戻す.
+    if (m_MoveTimer >= 4.0f)
+    {
+        m_MoveTimer = 0.0f;
+    }
+
+    if (m_MoveTimer < 3.0f)
+    {
+        // 3秒間は移動
+        D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+        PortalMoveSpeedBasic(PortalPos_v, m_MoveSpeed);
+    }
+    else
+    {
+        // 最後の1秒は停止（アニメーションを待機に変える）
+        const int IDLE_ANIM = 1;
+        if (m_AnimNo != IDLE_ANIM)
+        {
+            m_AnimNo = IDLE_ANIM;
+            m_pMesh->ChangeAnimSet(IDLE_ANIM, m_pAnimCtrl);
+            m_pMesh->SetAnimSpeed(m_AnimSpeed);
+        }
+    }
 }
 
 void Boss::PortalMoveHard()

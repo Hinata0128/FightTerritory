@@ -140,8 +140,14 @@ private:
 //		ボスの行動関数.
 // 	    ToDo : ボスがポータルへすすむようにする関数. 
 //-----------------------------------------------------------------------
-	//ポータルへボスが進む.
+	//ボスがポータルへ歩く接続用の関数.
+	//ToDo : 接続するためだけに使用.
 	void MoveToPortal();
+
+	//ポータルへの距離の取得用関数.
+	//ToDo : 第一引数では、ポータルのポジションを取得.
+	//		 第二引数では、ポータルまで進む速度の調整.
+	void PortalMoveSpeedBasic(D3DXVECTOR3 TargetPos, float Speed);
 
 	//ポータルへの移動/Easy.
 	void PortalMoveEasy();
@@ -241,5 +247,7 @@ private:
 	float m_CaptureTimer;
 	
 	std::shared_ptr<Portal> m_pPortal;
+
+	float m_MoveTimer;
 
 };
