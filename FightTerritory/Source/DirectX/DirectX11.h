@@ -57,6 +57,8 @@ public:
 	//デバイスコンテキストを取得.
 	ID3D11DeviceContext* GetContext() const { return m_pContext11; }
 
+	HWND GethWnd() const { return m_hWnd; }
+
 private:
 	DirectX11();
 	DirectX11(const DirectX11& rhs) = delete;
@@ -100,4 +102,6 @@ private:
 	//アルファブレンド.
 	ID3D11BlendState*		m_pAlphaBlendOn;	//有効設定.
 	ID3D11BlendState*		m_pAlphaBlendOff;	//無効設定.
+
+	HWND m_hWnd;
 };

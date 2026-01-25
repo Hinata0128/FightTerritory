@@ -54,7 +54,7 @@ Size=307,147
 Collapsed=0
 
 [Window][Game Score]
-ViewportPos=1589,407
+ViewportPos=1605,423
 ViewportId=0x7442DD1E
 Size=220,110
 Collapsed=0
@@ -66,7 +66,7 @@ Size=236,154
 Collapsed=0
 
 [Window][Portal System]
-ViewportPos=1580,260
+ViewportPos=1596,276
 ViewportId=0x7916E0CB
 Size=321,143
 Collapsed=0
@@ -78,7 +78,7 @@ Size=208,127
 Collapsed=0
 
 [Window][Scene Debug]
-ViewportPos=1416,213
+ViewportPos=1432,229
 ViewportId=0xD6FA3A12
 Size=150,319
 Collapsed=0

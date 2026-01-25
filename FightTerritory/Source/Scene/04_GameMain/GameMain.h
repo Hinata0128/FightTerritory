@@ -76,7 +76,6 @@ private:
 	//プレイヤークラス.
 	std::shared_ptr<Player> m_pPlayer;
 
-	//ポータルを先に宣言し、shared_ptr に変える
 	std::shared_ptr<Portal> m_pPortal;
 
 	//ボスをポータルの後に宣言する

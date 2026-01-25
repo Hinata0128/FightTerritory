@@ -162,29 +162,55 @@ void Credit::UpdateSelect()
 {
 	m_InputTimer += Timer::GetInstance().DeltaTime();
 
-	SelectMenu oldSelect = m_Select;
-	if (m_Select != oldSelect)
-	{
-		SoundManager::GetInstance()->PlaySE(SoundManager::SE_Select);
+	// 1. マウスカーソルを確実に表示
+	while (ShowCursor(TRUE) < 0);
 
-		//選択が変わったのでタイマーを初期化.
-		m_InputTimer = 0.0f;
-	}
+	// 2. マウス座標の取得とフルスクリーン対応のスケーリング
+	HWND hWnd = DirectX11::GetInstance()->GethWnd();
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(hWnd, &mousePos);
 
-	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
+	// 現在のウィンドウ（クライアント領域）のサイズを取得
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+	float windowW = (float)(rc.right - rc.left);
+	float windowH = (float)(rc.bottom - rc.top);
+
+	// 0除算防止
+	if (windowW <= 0.0f) windowW = 1.0f;
+	if (windowH <= 0.0f) windowH = 1.0f;
+
+	// 論理座標（1280x720）に変換
+	float mouseX = (float)mousePos.x * (1280.0f / windowW);
+	float mouseY = (float)mousePos.y * (720.0f / windowH);
+
+	// 3. 当たり判定の設定
+	const float btnW = 320.0f; // 背景画像の幅
+	const float btnH = 80.0f;  // 背景画像の高さ
+
+	// Draw関数の backPos 補正値 (-60.0f, -15.0f) を考慮
+	float checkX = m_EndPos.x - 60.0f;
+	float checkY = m_EndPos.y - 15.0f;
+
+	// マウスがボタンの範囲内にあるかチェック
+	bool isMouseOver = (mouseX >= checkX && mouseX <= checkX + btnW &&
+		mouseY >= checkY && mouseY <= checkY + btnH);
+
+	// 4. 決定操作 (マウス左クリックのみ、スペースキー判定は削除)
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
-		if (m_InputTimer >= 0.2f)
+		if (m_InputTimer >= 0.2f && isMouseOver)
 		{
 			SoundManager::GetInstance()->PlaySE(SoundManager::SE_Enter);
-			if (m_Select == SelectMenu::End)
-			{
-				m_State = CreditState::FadeOut;
-				m_FadeAlpha = 0.0f;
-			}
+
+			// クレジット終了（タイトルへ）
+			m_State = CreditState::FadeOut;
+			m_FadeAlpha = 0.0f;
+
 			m_InputTimer = 0.0f;
 		}
 	}
-
 }
 
 void Credit::UpdateFadeOut()
