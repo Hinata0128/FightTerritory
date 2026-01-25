@@ -1,1 +1,22 @@
-[]
+{
+  "BossDifficulty": {
+    "Easy": {
+      "MoveSpeed": 1.2,
+      "ShotInterval": 5.0,
+      "PressureShotInterval": 2.5,
+      "DefenseRadius": 6.0
+    },
+    "Hard": {
+      "MoveSpeed": 3.5,
+      "ShotInterval": 2.0,
+      "PressureShotInterval": 1.5,
+      "DefenseRadius": 8.0
+    },
+    "Final": {
+      "MoveSpeed": 5.0,
+      "ShotInterval": 1.0,
+      "PressureShotInterval": 0.5,
+      "DefenseRadius": 10.0
+    }
+  }
+}
