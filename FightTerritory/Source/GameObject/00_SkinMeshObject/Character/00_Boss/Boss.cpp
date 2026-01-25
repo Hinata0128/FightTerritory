@@ -332,3 +332,47 @@ void Boss::SetDifficulty(BossDifficulty diff)
 void Boss::ApplyDifficultyParam()
 {
 }
+
+void Boss::DecideAction()
+{
+}
+
+void Boss::MoveToPortal()
+{
+}
+
+void Boss::PortalMoveEasy()
+{
+}
+
+void Boss::PortalMoveHard()
+{
+}
+
+void Boss::PortalMoveFinal()
+{
+}
+
+void Boss::AttackEasy()
+{
+}
+
+void Boss::AttackHard()
+{
+}
+
+void Boss::AttackFinal()
+{
+}
+
+void Boss::DefenseEasy()
+{
+}
+
+void Boss::DefenseHard()
+{
+}
+
+void Boss::DefenseFinal()
+{
+}

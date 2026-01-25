@@ -186,7 +186,6 @@
     <ClCompile Include="Source\Effect\Effect.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\01_BossStateBase\03_BossPortalAnim\BossPortalAnim.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\Character.cpp" />
-    <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\02_Com\Com.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\Boss.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\00_BossContext\BossContext.cpp" />
     <ClCompile Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\01_BossStateBase\00_BossIdol\BossIdol.cpp" />
@@ -287,7 +286,6 @@
     <ClInclude Include="Source\Effekseer\include\EffekseerRendererDX11.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\01_BossStateBase\03_BossPortalAnim\BossPortalAnim.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\Character.h" />
-    <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\02_Com\Com.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\Boss.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\00_BossContext\BossContext.h" />
     <ClInclude Include="Source\GameObject\00_SkinMeshObject\Character\00_Boss\01_BossStateBase\00_BossIdol\BossIdol.h" />
