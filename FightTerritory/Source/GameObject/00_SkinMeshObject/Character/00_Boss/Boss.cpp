@@ -51,6 +51,8 @@ Boss::Boss(std::shared_ptr<Portal> pPortal)
 
     , m_CaptureTimer(0.0f)
 
+    , m_pPortal     (pPortal)
+
 {
     SkinMesh* raw_mesh = SkinMeshManager::GetInstance()->GetSkinMeshInstance(SkinMeshManager::SkinList::Enemy);
     auto shared_mesh = std::shared_ptr<SkinMesh>(raw_mesh, [](SkinMesh*) {});
@@ -81,6 +83,7 @@ Boss::Boss(std::shared_ptr<Portal> pPortal)
 
     Init();
 }
+
 
 Boss::~Boss()
 {
@@ -386,7 +389,7 @@ void Boss::ApplyDifficultyParam()
     //jsonファイルの読み込み.
     std::ifstream File("Data\\json\\BossParam\\BossParam.json");
     //ToDO : ファイルパスがあっていないときはここを抜ける.
-    if (File.is_open())
+    if (!File.is_open())
     {
         return;
     }
@@ -425,8 +428,20 @@ void Boss::ApplyDifficultyParam()
     SetShotInterval(m_ShotInterval);
 }
 
+//決定アクション.
+//ToDo : プレイヤーがポータルを取得しているとき.
+//		 ボスがポータルを取得しているとき.
+//		 誰もとっていないとき.
+//		 プレイヤーが死亡してポータル主がプレイヤーの時取得する.
 void Boss::DecideAction()
 {
+    //自分の位置を取得.
+    D3DXVECTOR3 BossPos_v = GetPosition();
+    //ポータルの位置を取得.
+    D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+
+    //ポータルから自分への距離を計算.
+    D3DXVECTOR3 Diff = PortalPos_v - BossPos_v;
 }
 
 void Boss::MoveToPortal()

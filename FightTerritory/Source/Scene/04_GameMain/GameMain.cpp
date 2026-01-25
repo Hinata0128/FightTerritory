@@ -111,26 +111,43 @@ void GameMain::Update()
 
 	if (SceneManager::GetInstance()->IsPause())
 	{
+		// ポーズ中も表示
+		while (ShowCursor(TRUE) < 0);
 		return;
 	}
 
-	//Timer更新
+	// 【修正】ゲーム中もマウスを表示する
+	while (ShowCursor(TRUE) < 0);
+
+	// Timer更新
 	Timer::GetInstance().Update();
 
-	static POINT prevMouse;
+	// --- フルスクリーン対応のマウス計算 ---
+	HWND hWnd = DirectX11::GetInstance()->GethWnd();
 	POINT currMouse;
 	GetCursorPos(&currMouse);
-	float dx = (float)(currMouse.x - (WND_W / 2));
-	float dy = (float)(currMouse.y - (WND_H / 2));
+
+	// ウィンドウの中心座標を計算（フルスクリーン時も考慮）
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+	POINT center = { (rc.right - rc.left) / 2, (rc.bottom - rc.top) / 2 };
+
+	// クライアント座標（中心）をスクリーン座標に変換
+	ClientToScreen(hWnd, &center);
+
+	// 中心からの移動量を計算（カメラの回転用）
+	float dx = (float)(currMouse.x - center.x);
+	float dy = (float)(currMouse.y - center.y);
+
+	// マウスを中心に戻す（FPS形式のカメラ操作）
+	// ※これを行わないと、マウスが画面端に当たった時にカメラが回らなくなります
 	if (!SceneManager::GetInstance()->IsPause())
 	{
-		SetCursorPos(WND_W / 2, WND_H / 2);
+		SetCursorPos(center.x, center.y);
 	}
 
-	if (!SceneManager::GetInstance()->IsPause())
-	{
-		Camera::GetInstance().Update(dx, dy, m_pPlayer->GetPosition());
-	}
+	// カメラ更新
+	Camera::GetInstance().Update(dx, dy, m_pPlayer->GetPosition());
 
 	{
 		static ::EsHandle hEffect = -1;

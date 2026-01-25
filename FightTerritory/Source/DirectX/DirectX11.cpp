@@ -89,6 +89,8 @@ HRESULT DirectX11::Create(HWND hWnd)
 		return E_FAIL;
 	}
 
+	m_hWnd = hWnd;
+
 	return S_OK;
 }
 

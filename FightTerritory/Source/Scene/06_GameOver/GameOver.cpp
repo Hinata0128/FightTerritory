@@ -206,58 +206,85 @@ void GameOver::UpdateSelect()
 {
 	m_InputTimer += Timer::GetInstance().DeltaTime();
 
+	// 1. マウスカーソルを確実に表示
+	while (ShowCursor(TRUE) < 0);
+
+	// 2. マウス座標の取得とフルスクリーン対応の座標変換
+	HWND hWnd = DirectX11::GetInstance()->GethWnd();
+	POINT mousePos;
+	GetCursorPos(&mousePos);
+	ScreenToClient(hWnd, &mousePos);
+
+	// ウィンドウの現在のサイズを取得
+	RECT rc;
+	GetClientRect(hWnd, &rc);
+	float windowW = (float)(rc.right - rc.left);
+	float windowH = (float)(rc.bottom - rc.top);
+
+	// 0除算防止
+	if (windowW <= 0.0f) windowW = 1.0f;
+	if (windowH <= 0.0f) windowH = 1.0f;
+
+	// 物理座標をゲーム内の論理座標（1280x720）に変換
+	float mouseX = (float)mousePos.x * (1280.0f / windowW);
+	float mouseY = (float)mousePos.y * (720.0f / windowH);
+
 	SelectMenu oldSelect = m_Select;
 
-	if (GetAsyncKeyState('W') & 0x0001)
+	// 3. ボタンの当たり判定（マウスホバー）
+	const float btnW = 320.0f; // 背景画像(SelectBack)の幅
+	const float btnH = 80.0f;  // 背景画像(SelectBack)の高さ
+
+	auto CheckMouseOver = [&](D3DXVECTOR3 pos) {
+		// Draw関数内での表示位置補正 (backPos.x -= 60.0f, y -= 15.0f) に合わせる
+		float x = pos.x - 60.0f;
+		float y = pos.y - 15.0f;
+		return (mouseX >= x && mouseX <= x + btnW &&
+			mouseY >= y && mouseY <= y + btnH);
+		};
+
+	// マウスが乗っている項目に選択を切り替える（キーボード入力は削除）
+	if (CheckMouseOver(m_ContinuePos))
 	{
-		if (m_InputTimer >= 0.2f)
-		{
-			m_Select = SelectMenu::Continue;
-		}
+		m_Select = SelectMenu::Continue;
+	}
+	else if (CheckMouseOver(m_EndPos))
+	{
+		m_Select = SelectMenu::End;
 	}
 
-	if (GetAsyncKeyState('S') & 0x0001)
-	{
-		if (m_InputTimer >= 0.2f)
-		{
-			m_Select = SelectMenu::End;
-		}
-	}
-
+	// 選択が変わった時だけSEを鳴らす
 	if (m_Select != oldSelect)
 	{
 		SoundManager::GetInstance()->PlaySE(SoundManager::SE_Select);
-
-		//選択が変わったのでタイマーを初期化.
 		m_InputTimer = 0.0f;
 	}
 
-	if (m_Select == SelectMenu::Continue)
-	{
-		m_ContinuePos;
-		m_EndPos;
-	}
-	else
-	{
-		m_ContinuePos;
-		m_EndPos;
-	}
-	if (GetAsyncKeyState(VK_SPACE) & 0x0001)
+	// 4. 決定操作 (マウス左クリックのみ)
+	// 0x8000で「現在押されているか」を判定
+	if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
 	{
 		if (m_InputTimer >= 0.2f)
 		{
-			SoundManager::GetInstance()->PlaySE(SoundManager::SE_Enter);
-			if (m_Select == SelectMenu::Continue)
+			// マウスが有効なボタンの上にある時だけ決定処理を行う
+			bool onButton = CheckMouseOver(m_ContinuePos) || CheckMouseOver(m_EndPos);
+
+			if (onButton)
 			{
-				m_State = LoseState::FadeOut;
-				m_FadeAlpha = 0.0f;
+				SoundManager::GetInstance()->PlaySE(SoundManager::SE_Enter);
+
+				if (m_Select == SelectMenu::Continue)
+				{
+					m_State = LoseState::FadeOut;
+					m_FadeAlpha = 0.0f;
+				}
+				else
+				{
+					// タイトル(OP)へ遷移
+					SceneManager::GetInstance()->LoadScene(SceneManager::OP);
+				}
+				m_InputTimer = 0.0f;
 			}
-			else
-			{
-				//タイトルへ遷移.
-				SceneManager::GetInstance()->LoadScene(SceneManager::OP);
-			}
-			m_InputTimer = 0.0f;
 		}
 	}
 }
