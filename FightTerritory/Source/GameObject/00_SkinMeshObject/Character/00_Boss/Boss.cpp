@@ -354,7 +354,7 @@ void Boss::DecideDifficltyByRound(float raund)
     {
         if (Raund < 90)
         {
-            SetDifficulty(BossDifficulty::Final);
+            SetDifficulty(BossDifficulty::Hard);
         }
         else
         {
@@ -507,8 +507,6 @@ void Boss::DecideAction()
 //ボスがポータルへ歩く接続用の関数.
 void Boss::MoveToPortal()
 {
-    //Todo : 移動中も攻撃のインターバルを設定しておく[いらなくなったら消す].
-    SetShotInterval(m_ShotInterval);
     //jsonから読み込まれたしそれぞれの難易度のボスの速度を代入.
     float Speed = m_MoveSpeed;
 
@@ -628,6 +626,8 @@ void Boss::PortalMoveHard()
     PortalMoveSpeedBasic(targetPos, m_MoveSpeed); 
 }
 
+//ポータルへの移動/Final.
+//ToDo : 最速で何もせずに移動する.
 void Boss::PortalMoveFinal()
 {
     D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
@@ -637,28 +637,61 @@ void Boss::PortalMoveFinal()
 
 void Boss::Attack()
 {
+    switch (m_Difficulty)
+    {
+    case Boss::BossDifficulty::Easy:
+        AttackEasy();
+        break;
+    case Boss::BossDifficulty::Hard:
+        AttackHard();
+        break;
+    case Boss::BossDifficulty::Final:
+        AttackFinal();
+        break;
+    default:
+        break;
+    }
 }
 
 void Boss::AttackEasy()
 {
+    RequestShot();
 }
 
 void Boss::AttackHard()
 {
+    RequestShot();
 }
 
 void Boss::AttackFinal()
 {
+    RequestShot();
 }
 
 //プレイヤーがポータルを取得している.
 //ToDo : この時はボスの攻撃のインターバルを早くしたりする.
 void Boss::PlayerMainPortalGetMyAttack()
 {
+    MoveToPortal();
+    RequestShot();
 }
 
 void Boss::Defense()
 {
+    switch (m_Difficulty)
+    {
+    case Boss::BossDifficulty::Easy:
+        DefenseEasy();
+        break;
+    case Boss::BossDifficulty::Hard:
+        DefenseHard();
+        break;
+    case Boss::BossDifficulty::Final:
+        DefenseFinal();
+        break;
+    default:
+        break;
+    }
 }
 
 void Boss::DefenseEasy()
@@ -667,6 +700,73 @@ void Boss::DefenseEasy()
 
 void Boss::DefenseHard()
 {
+    float deltaTime = Timer::GetInstance().DeltaTime();
+    float totalTime = Timer::GetInstance().ElapsedTime();
+
+    //現在の各オブジェクトの座標取得.
+    D3DXVECTOR3 BossPos_v = GetPosition();
+    D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+    D3DXVECTOR3 PlayerPos_v = GetPlayerPos();
+
+    //プレイヤーを注視する処理.
+    D3DXVECTOR3 Look = PlayerPos_v - BossPos_v;
+    Look.y = 0.0f;
+    D3DXVec3Normalize(&Look, &Look);
+    float Angle = atan2f(-Look.x, -Look.z);
+    SetRotationY(Angle);
+
+    //ポータルを基準とした方向と距離の計算
+    D3DXVECTOR3 ToBoss = BossPos_v - PortalPos_v;
+    ToBoss.y = 0.0f;
+    float CurrentDist = D3DXVec3Length(&ToBoss);
+
+    if (CurrentDist < 0.01f)
+    {
+        return;
+    }
+
+    D3DXVec3Normalize(&ToBoss, &ToBoss);
+
+    //動的な目標距離の計算飛び出す距離の調整
+    //ポータルから離れる基本の距離4.0fに設定.
+    float targetBaseDist = 4.0f;
+
+    //この値を小さくするほど、前後の動きが控えめになります
+    float zigzagAmplitude = 1.2f;
+
+    //揺れる速さ
+    float zigzagFrequency = 5.0f;
+
+    //目標距離を計算
+    float dynamicTargetDist = targetBaseDist + sinf(totalTime * zigzagFrequency) * zigzagAmplitude;
+
+    //目標距離への接近・離反速度
+    float distError = CurrentDist - dynamicTargetDist;
+    //振幅を小さくしたので、引き戻し係数を 4.0f に調整して滑らかに追従させます
+    D3DXVECTOR3 depthVelocity = -ToBoss * (distError * 4.0f);
+
+    //横移動円運動
+    D3DXVECTOR3 Up(0, 1, 0);
+    D3DXVECTOR3 Tangent;
+    D3DXVec3Cross(&Tangent, &Up, &ToBoss);
+
+    float localMoveSpeed = 5.0f;
+    float rotationSpeedRate = 0.5f;
+    D3DXVECTOR3 horizontalVelocity = Tangent * (localMoveSpeed * rotationSpeedRate);
+
+    //最終的な速度の合成と移動の適用
+    D3DXVECTOR3 Velocity = horizontalVelocity + depthVelocity;
+    AddPosition(Velocity * deltaTime);
+
+    //アニメーション制御と攻撃リクエスト
+    const int WALK_ANIMATION_NO = 2;
+    if (m_AnimNo != WALK_ANIMATION_NO)
+    {
+        m_AnimNo = WALK_ANIMATION_NO;
+        m_pMesh->ChangeAnimSet(m_AnimNo, m_pAnimCtrl);
+    }
+
+    RequestShot();
 }
 
 void Boss::DefenseFinal()
