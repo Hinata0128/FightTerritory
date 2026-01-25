@@ -9,6 +9,8 @@
 
 #include "SceneManager/SceneManager.h"
 
+using json = nlohmann::json;
+
 constexpr float zero = 0.0f;
 
 Boss::Boss(std::shared_ptr<Portal> pPortal)

@@ -287,87 +287,100 @@ void PlayerMove::HandleMove(
     D3DXVECTOR3 camForward = cam.GetForward();
     D3DXVECTOR3 camRight = cam.GetRight();
 
-    // 高低差（y軸）の影響を無視して、地面の方向だけを計算
+    // Y軸（高さ）の影響を無視して水平方向のみにする
     camForward.y = 0.0f;
     camRight.y = 0.0f;
     D3DXVec3Normalize(&camForward, &camForward);
     D3DXVec3Normalize(&camRight, &camRight);
 
-    // --- ① 目標となる移動方向ベクトルを合成する ---
-    D3DXVECTOR3 targetDir(0, 0, 0);
-
-    // 現在の enMove 判定を利用して進みたい方向を合成
-    switch (Move)
-    {
-    case enMove::ForWard:          targetDir = camForward; break;
-    case enMove::Back:             targetDir = -camForward; break;
-    case enMove::Left:             targetDir = -camRight; break;
-    case enMove::Right:            targetDir = camRight; break;
-    case enMove::ForWardAndLeft:   targetDir = camForward - camRight; break;
-    case enMove::ForWardAAndRight: targetDir = camForward + camRight; break;
-    case enMove::BackAndLeft:      targetDir = -camForward - camRight; break;
-    case enMove::BackAndRight:     targetDir = -camForward + camRight; break;
-    default:                       targetDir = D3DXVECTOR3(0, 0, 0); break;
-    }
-
-    // --- ② 移動と滑らかな回転の処理 ---
-    float length = D3DXVec3Length(&targetDir);
-
-    if (length > 0.0f)
-    {
-        // ベクトルを正規化（斜め移動で速くならないように）
-        D3DXVec3Normalize(&targetDir, &targetDir);
-
-        // 座標更新
-        ctx.Position += targetDir * add_value;
-
-        // 目標の角度（ラジアン）を算出
-        float targetRotationY = atan2f(targetDir.x, targetDir.z);
-
-        // 【ここがポイント】現在の角度から目標角度へ少しずつ近づける
-        float diff = targetRotationY - ctx.Rotation.y;
-
-        // 180度以上回転しないように最短ルートを計算 (-PI ~ PI の範囲に補正)
-        while (diff > D3DX_PI) diff -= D3DX_PI * 2.0f;
-        while (diff < -D3DX_PI) diff += D3DX_PI * 2.0f;
-
-        // 回転速度（0.1f ならゆっくり、0.3f なら素早く向く）
-        float lerpFactor = 0.15f;
-        ctx.Rotation.y += diff * lerpFactor;
-
-        // 走りアニメーション
-        ctx.AnimNo = 2;
-        ctx.AnimTime += ctx.AnimSpeed;
-    }
-    else
-    {
-        // 静止アニメーション
-        ctx.AnimNo = 0;
-        ctx.AnimTime += ctx.AnimSpeed;
-    }
-}
-
-//Playerの動作[InputKeyManagerを使用して]書く関数.
-PlayerMove::enMove PlayerMove::GetMoveInput()
-{
-    // WASDの動作.
+    //入力から移動ベクトルを作成
+    D3DXVECTOR3 moveVec(0, 0, 0);
     bool W = (m_Key->GetKey("W") && m_Key->GetKey("W")->HoldDownKey());
     bool A = (m_Key->GetKey("A") && m_Key->GetKey("A")->HoldDownKey());
     bool S = (m_Key->GetKey("S") && m_Key->GetKey("S")->HoldDownKey());
     bool D = (m_Key->GetKey("D") && m_Key->GetKey("D")->HoldDownKey());
 
-    //斜め優先判定.
+    if (W)
+    {
+        moveVec += camForward;
+    }
+    if (S)
+    {
+        moveVec -= camForward;
+    }
+    if (A)
+    {
+        moveVec -= camRight;
+    }
+    if (D)
+    {
+        moveVec += camRight;
+    }
+    bool isMoving = (D3DXVec3Length(&moveVec) > 0.0f);
+
+    bool IsRAttacking = (step != enStep::none);
+    bool IsLAttacking = (LStep != enLeftStep::none);
+
+    auto ApplyMoveAnimation = [&](int animNo) 
+    {
+        if (IsRAttacking || IsLAttacking)
+        {
+            return;
+        }
+        if (ctx.AnimNo != animNo) 
+        {
+            ctx.AnimNo = animNo;
+            ctx.AnimTime = 0.0f;
+            ctx.Mesh->SetAnimSpeed(ctx.AnimSpeed, ctx.AnimCtrl);
+            ctx.Mesh->ChangeAnimSet(ctx.AnimNo, ctx.AnimCtrl);
+        }
+    };
+
+    //移動と回転の処理
+    if (isMoving) 
+    {
+        // 正規化して移動速度を一定にする
+        D3DXVec3Normalize(&moveVec, &moveVec);
+        ctx.Position += moveVec * add_value;
+
+        float targetAngle = atan2f(moveVec.x, moveVec.z);
+        float currentAngle = ctx.Rotation.y;
+
+        // 最短距離で回転するための角度差分計算
+        float diff = targetAngle - currentAngle;
+        while (diff > D3DX_PI) diff -= D3DX_PI * 2.0f;
+        while (diff < -D3DX_PI) diff += D3DX_PI * 2.0f;
+
+        // 0.2f は回転速度（0.0〜1.0）。大きくすると素早く向きを変える
+        ctx.Rotation.y += diff * 0.2f;
+
+        ApplyMoveAnimation(2); // 走りアニメーション
+    }
+    else {
+        ApplyMoveAnimation(0); // アイドルアニメーション
+    }
+
+    ctx.AnimTime += ctx.AnimSpeed;
+
+
+}
+
+//Playerの動作[InputKeyManagerを使用して]書く関数.
+PlayerMove::enMove PlayerMove::GetMoveInput()
+{
+    bool W = (m_Key->GetKey("W") && m_Key->GetKey("W")->HoldDownKey());
+    bool A = (m_Key->GetKey("A") && m_Key->GetKey("A")->HoldDownKey());
+    bool S = (m_Key->GetKey("S") && m_Key->GetKey("S")->HoldDownKey());
+    bool D = (m_Key->GetKey("D") && m_Key->GetKey("D")->HoldDownKey());
+
     if (W && D) return enMove::ForWardAAndRight;
     if (W && A) return enMove::ForWardAndLeft;
     if (S && D) return enMove::BackAndRight;
     if (S && A) return enMove::BackAndLeft;
-
-    //単方向判定.
     if (W) return enMove::ForWard;
     if (S) return enMove::Back;
     if (A) return enMove::Left;
     if (D) return enMove::Right;
 
-    //どのキーも押していないときは、0番目のアニメーションを再生.
     return enMove::Idol;
 }
