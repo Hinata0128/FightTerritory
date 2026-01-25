@@ -16,6 +16,8 @@ class Shadow;
 
 #include "GameObject//02_StaticMeshObject//01_Portal//Portal.h"
 
+#include <nlohmann/json.hpp>
+
 
 
 class Boss final
