@@ -354,7 +354,7 @@ void Boss::DecideDifficltyByRound(float raund)
     {
         if (Raund < 90)
         {
-            SetDifficulty(BossDifficulty::Easy);
+            SetDifficulty(BossDifficulty::Final);
         }
         else
         {
@@ -413,7 +413,7 @@ void Boss::ApplyDifficultyParam()
         Key = "Hard";
         break;
     case Boss::BossDifficulty::Final:
-        Key = "Fianl";
+        Key = "Final";
         break;
     default:
         break;
@@ -630,6 +630,9 @@ void Boss::PortalMoveHard()
 
 void Boss::PortalMoveFinal()
 {
+    D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+
+    PortalMoveSpeedBasic(PortalPos_v, m_MoveSpeed);
 }
 
 void Boss::Attack()
