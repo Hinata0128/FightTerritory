@@ -10,6 +10,7 @@
 #include "SceneManager/SceneManager.h"
 
 using json = nlohmann::json;
+#include <fstream>
 
 constexpr float zero = 0.0f;
 
@@ -382,33 +383,46 @@ void Boss::SetDifficulty(BossDifficulty diff)
 //ボスの行動調整関数.
 void Boss::ApplyDifficultyParam()
 {
-    //それぞれの難易度の移動速度等を変更.
+    //jsonファイルの読み込み.
+    std::ifstream File("Data\\json\\BossParam\\BossParam.json");
+    //ToDO : ファイルパスがあっていないときはここを抜ける.
+    if (File.is_open())
+    {
+        return;
+    }
+
+    json Data;
+    File >> Data;
+
+    //現在の難易度に対応するjsonファイルのコードを取得.
+    std::string Key;
+    //それぞれの難易度のパラメータを取得.
     switch (m_Difficulty)
     {
-    //Easyモードのパラメータ.
     case Boss::BossDifficulty::Easy:
-        m_MoveSpeed = 1.2f;
-        m_ShotInterval = 5.0f;
-        m_PressureShotInterval = 2.5f;
-        m_DefenseRadius = 6.0f;
+        Key = "Easy";
         break;
-    //Hardモードのパラメータ.
     case Boss::BossDifficulty::Hard:
-        m_MoveSpeed = 3.5f;
-        m_ShotInterval = 2.0f;
-        m_PressureShotInterval = 1.5f;
-        m_DefenseRadius = 8.0f;
+        Key = "Hard";
         break;
-    //Finalモードのパラメータ.
     case Boss::BossDifficulty::Final:
-        m_MoveSpeed = 5.0f;
-        m_ShotInterval = 1.0f;
-        m_PressureShotInterval = 0.5f;
-        m_DefenseRadius = 10.0f;
+        Key = "Fianl";
         break;
     default:
         break;
     }
+
+    //ToDo : jsonから値を抽出してメンバ変数に代入させる.
+    auto& Param             = Data["BossDifficulty"][Key];
+
+    //jsonの中に書いているパラメータを取得.
+    m_MoveSpeed             = Param["MoveSpeed"].get<float>();
+    m_ShotInterval          = Param["ShotInterval"].get<float>();
+    m_PressureShotInterval  = Param["PressureShotInterval"].get<float>();
+    m_DefenseRadius         = Param["DefenseRadius"].get<float>();
+
+    //弾の発射間隔を反映.
+    SetShotInterval(m_ShotInterval);
 }
 
 void Boss::DecideAction()
