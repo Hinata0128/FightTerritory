@@ -98,6 +98,8 @@ void Boss::Init()
     int score = SceneManager::GetInstance()->GetPlayerScore() + SceneManager::GetInstance()->GetEnemyScore();
     m_CurrentRound = score + 1;
 
+    DecideDifficltyByRound((float)m_CurrentRound);
+
     //待機アニメーションを再生.
     const int IDLE_ANIM = 0;
     if (m_pMesh && m_pAnimCtrl)
@@ -593,12 +595,37 @@ void Boss::PortalMoveEasy()
     }
 }
 
+//ポータルへの移動/Hard.
 void Boss::PortalMoveHard()
 {
+    //デルタタイム取得.
     float deltaTime = Timer::GetInstance().DeltaTime();
     m_MoveTimer += deltaTime;
 
+    D3DXVECTOR3 BossPos_v = GetPosition();
+    D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
 
+    D3DXVECTOR3 forward = PortalPos_v - BossPos_v;
+    forward.y = 0.0f;
+    float distToPortal = D3DXVec3Length(&forward);
+
+    if (distToPortal < 1.0f) 
+    {
+        PortalMoveSpeedBasic(PortalPos_v, m_MoveSpeed);
+        return;
+    }
+    D3DXVec3Normalize(&forward, &forward);
+
+    D3DXVECTOR3 up(0, 1, 0);
+    D3DXVECTOR3 side;
+    D3DXVec3Cross(&side, &up, &forward);
+    D3DXVec3Normalize(&side, &side);
+
+    float wave = sinf(m_MoveTimer * 3.0f) * 5.0f;
+
+    D3DXVECTOR3 targetPos = BossPos_v + (forward * 2.0f) + (side * wave);
+
+    PortalMoveSpeedBasic(targetPos, m_MoveSpeed); 
 }
 
 void Boss::PortalMoveFinal()
