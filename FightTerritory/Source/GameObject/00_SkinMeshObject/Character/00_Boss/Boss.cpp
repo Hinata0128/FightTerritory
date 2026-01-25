@@ -5,8 +5,6 @@
 #include "..//00_Boss/00_BossContext/BossContext.h"
 #include "..//00_Boss/01_BossStateBase/BossStateBase.h"
 
-#include "02_Com/Com.h"
-
 #include "GameObject/01_SpriteObject/00_Shadow/Shadow.h"
 
 #include "SceneManager/SceneManager.h"
@@ -15,6 +13,19 @@ constexpr float zero = 0.0f;
 
 Boss::Boss(std::shared_ptr<Portal> pPortal)
     : Character()
+
+
+    , m_Difficulty(BossDifficulty::Easy)
+
+    , m_MoveSpeed(1.5f)
+
+    , m_ShotInterval(0.0f)
+    , m_DefenseRadius(0.0f)
+
+    , m_PressureShotInterval(0.0f)
+
+    , m_IsCapturingPortal(false)
+
     , m_pENShotManager(nullptr)
     
     , m_pIdol(std::make_unique<BossIdol>(this))
@@ -359,12 +370,43 @@ void Boss::DecideDifficltyByRound(float raund)
     }
 }
 
+//難易度用のSet関数.
 void Boss::SetDifficulty(BossDifficulty diff)
 {
+    m_Difficulty = diff;
+    ApplyDifficultyParam();
 }
 
+//ボスの行動調整関数.
 void Boss::ApplyDifficultyParam()
 {
+    //それぞれの難易度の移動速度等を変更.
+    switch (m_Difficulty)
+    {
+    //Easyモードのパラメータ.
+    case Boss::BossDifficulty::Easy:
+        m_MoveSpeed = 1.2f;
+        m_ShotInterval = 5.0f;
+        m_PressureShotInterval = 2.5f;
+        m_DefenseRadius = 6.0f;
+        break;
+    //Hardモードのパラメータ.
+    case Boss::BossDifficulty::Hard:
+        m_MoveSpeed = 3.5f;
+        m_ShotInterval = 2.0f;
+        m_PressureShotInterval = 1.5f;
+        m_DefenseRadius = 8.0f;
+        break;
+    //Finalモードのパラメータ.
+    case Boss::BossDifficulty::Final:
+        m_MoveSpeed = 5.0f;
+        m_ShotInterval = 1.0f;
+        m_PressureShotInterval = 0.5f;
+        m_DefenseRadius = 10.0f;
+        break;
+    default:
+        break;
+    }
 }
 
 void Boss::DecideAction()

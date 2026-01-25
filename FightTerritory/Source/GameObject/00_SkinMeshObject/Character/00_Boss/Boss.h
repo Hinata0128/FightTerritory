@@ -121,7 +121,8 @@ public:
 public:
 	//難易度用のSet関数.
 	void SetDifficulty(BossDifficulty diff);
-	//難易度を反映させる.
+	//ボスの行動調整関数.
+	//ToDo : ボスの移動・弾の発射間隔等を難易度別に実装する関数です.
 	void ApplyDifficultyParam();
 
 private:
@@ -170,6 +171,22 @@ private:
 	void DefenseHard();
 	//ボスのFinalモードのときの防衛関数.
 	void DefenseFinal();
+
+//-----------------------------------------------------------------------
+//		ボスの攻撃等に必要なメンバ変数.
+//-----------------------------------------------------------------------
+	BossDifficulty m_Difficulty;
+	//ボスの速度.
+	float m_MoveSpeed;
+	//ボスの攻撃のインターバル.
+	float m_ShotInterval;
+	//防衛時の許容半径.
+	float m_DefenseRadius;
+	//プレイヤーがポータル主の時の発射速度.
+	float m_PressureShotInterval;
+	//ポータル取得中か？.
+	bool m_IsCapturingPortal;
+
 
 private:
 	BossShotManager* m_pENShotManager;
