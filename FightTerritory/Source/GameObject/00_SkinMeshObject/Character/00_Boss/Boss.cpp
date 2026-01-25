@@ -429,10 +429,11 @@ void Boss::ApplyDifficultyParam()
 }
 
 //決定アクション.
-//ToDo : プレイヤーがポータルを取得しているとき.
-//		 ボスがポータルを取得しているとき.
-//		 誰もとっていないとき.
-//		 プレイヤーが死亡してポータル主がプレイヤーの時取得する.
+//ToDo : 今何をするべきか.
+//       Lプレイヤーがポータルを取得しているとき.
+//		 Lボスがポータルを取得しているとき.
+//		 L誰もとっていないとき.
+//		 Lプレイヤーが死亡してポータル主がプレイヤーの時取得する.
 void Boss::DecideAction()
 {
     //自分の位置を取得.
@@ -442,10 +443,83 @@ void Boss::DecideAction()
 
     //ポータルから自分への距離を計算.
     D3DXVECTOR3 Diff = PortalPos_v - BossPos_v;
+    //長さを求めている.
+    float Dist = D3DXVec3Length(&Diff);
+
+    //現在のポータル占拠情報を取得.
+    //ToDO : それぞれの時の行動を書く.
+    Portal::PortalPriority State = m_pPortal->GetPortalState();
+
+    //プレイヤーが死亡したかを取得.
+    bool IsPlayerDead = IsTargetDead();
+
+    if (State == Portal::PortalPriority::Player && IsPlayerDead)
+    {
+        m_IsCapturingPortal = true;
+    }
+
+    if (m_IsCapturingPortal)
+    {
+        //奪取完了.
+        if (State == Portal::PortalPriority::Enemy)
+        {
+            m_IsCapturingPortal = false;
+        }
+        else
+        {
+            SetShotInterval(m_ShotInterval);
+            MoveToPortal();
+            Attack();
+            return;
+        }
+    }
+
+    if (State == Portal::PortalPriority::Player && !IsPlayerDead)
+    {
+        //プレイヤーがポータルを占拠しているときにボスの攻撃のインターバルを変更.
+        SetShotInterval(m_PressureShotInterval);
+        //プレイヤーを攻撃しながら間合いを調整する.
+        PlayerMainPortalGetMyAttack();
+        return;
+    }
+
+    //誰もポータルを取得していないので、ポータルを奪取するために中心へ移動する.
+    if (State == Portal::PortalPriority::None || (State == Portal::PortalPriority::Player && IsPlayerDead))
+    {
+        SetShotInterval(m_ShotInterval);
+        MoveToPortal();
+        Attack();
+        return;
+    }
+
+    //自分の陣地を守る防衛行動に切り替える.
+    if (State == Portal::PortalPriority::Enemy)
+    {
+        //ToDo : このDefense()の中で難易度別の攻撃を呼ぶ.
+        Defense();
+    }
 }
 
 void Boss::MoveToPortal()
 {
+    //Todo : 移動中も攻撃のインターバルを設定しておく[いらなくなったら消す].
+    SetShotInterval(m_ShotInterval);
+
+    //ボスのラウンドの状態でどのように動くのかを設定.
+    switch (m_Difficulty)
+    {
+    case Boss::BossDifficulty::Easy:
+        PortalMoveEasy();
+        break;
+    case Boss::BossDifficulty::Hard:
+        PortalMoveHard();
+        break;
+    case Boss::BossDifficulty::Final:
+        PortalMoveFinal();
+        break;
+    default:
+        break;
+    }
 }
 
 void Boss::PortalMoveEasy()
@@ -460,6 +534,10 @@ void Boss::PortalMoveFinal()
 {
 }
 
+void Boss::Attack()
+{
+}
+
 void Boss::AttackEasy()
 {
 }
@@ -469,6 +547,16 @@ void Boss::AttackHard()
 }
 
 void Boss::AttackFinal()
+{
+}
+
+//プレイヤーがポータルを取得している.
+//ToDo : この時はボスの攻撃のインターバルを早くしたりする.
+void Boss::PlayerMainPortalGetMyAttack()
+{
+}
+
+void Boss::Defense()
 {
 }
 
