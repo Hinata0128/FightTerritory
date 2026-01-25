@@ -5,8 +5,6 @@
 #include "..//00_Boss/00_BossContext/BossContext.h"
 #include "..//00_Boss/01_BossStateBase/BossStateBase.h"
 
-#include "02_Com/Com.h"
-
 #include "GameObject/01_SpriteObject/00_Shadow/Shadow.h"
 
 #include "SceneManager/SceneManager.h"
@@ -359,6 +357,7 @@ void Boss::DecideDifficltyByRound(float raund)
     }
 }
 
+//難易度用のSet関数.
 void Boss::SetDifficulty(BossDifficulty diff)
 {
 }
