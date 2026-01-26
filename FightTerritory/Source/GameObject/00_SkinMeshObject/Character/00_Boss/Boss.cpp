@@ -354,7 +354,7 @@ void Boss::DecideDifficltyByRound(float raund)
     {
         if (Raund < 90)
         {
-            SetDifficulty(BossDifficulty::Hard);
+            SetDifficulty(BossDifficulty::Final);
         }
         else
         {
@@ -771,4 +771,62 @@ void Boss::DefenseHard()
 
 void Boss::DefenseFinal()
 {
+    float deltaTime = Timer::GetInstance().DeltaTime();
+    float totalTime = Timer::GetInstance().ElapsedTime();
+
+    D3DXVECTOR3 BossPos_v = GetPosition();
+    D3DXVECTOR3 PortalPos_v = m_pPortal->GetPosition();
+   
+    D3DXVECTOR3 PlayerPos_v = GetPlayerPos();
+    D3DXVECTOR3 Look = PlayerPos_v - BossPos_v;
+    Look.y = 0.0f;
+    D3DXVec3Normalize(&Look, &Look);
+    float Angle = atan2f(-Look.x, -Look.z);
+    SetRotationY(Angle);
+
+    D3DXVECTOR3 ToBoss = BossPos_v - PortalPos_v;
+    ToBoss.y = 0.0f;
+    float CurrentDist = D3DXVec3Length(&ToBoss);
+    if (CurrentDist < 0.01f) return;
+    D3DXVec3Normalize(&ToBoss, &ToBoss);
+
+    static float accumulatedAngle = 0.0f;
+    static float moveDirection = 1.0f;
+
+    float orbitSpeed = 4.0f; // 横移動の基本速度
+    // 回転した角度の増分を計算 (弧度法の公式: 角度 = 弧の長さ / 半径)
+    float deltaAngle = (orbitSpeed / CurrentDist) * deltaTime;
+    accumulatedAngle += deltaAngle;
+
+    if (accumulatedAngle >= D3DX_PI * 2.0f)
+    {
+        moveDirection *= -1.0f;
+        accumulatedAngle = 0.0f;
+    }
+
+    float targetBaseDist = 4.0f;     // 基本距離
+    float zigzagAmplitude = 1.5f;    // 揺れ幅（Hardより少し大きく設定）
+    float zigzagFrequency = 4.0f;    // 揺れる速さ
+
+    float dynamicTargetDist = targetBaseDist + sinf(totalTime * zigzagFrequency) * zigzagAmplitude;
+
+    float distError = CurrentDist - dynamicTargetDist;
+    D3DXVECTOR3 depthVelocity = -ToBoss * (distError * 4.0f);
+
+    D3DXVECTOR3 Up(0, 1, 0);
+    D3DXVECTOR3 Tangent;
+    D3DXVec3Cross(&Tangent, &Up, &ToBoss);
+    D3DXVECTOR3 horizontalVelocity = Tangent * (orbitSpeed * moveDirection);
+
+    D3DXVECTOR3 Velocity = horizontalVelocity + depthVelocity;
+    AddPosition(Velocity * deltaTime);
+
+    const int WALK_ANIMATION_NO = 2;
+    if (m_AnimNo != WALK_ANIMATION_NO)
+    {
+        m_AnimNo = WALK_ANIMATION_NO;
+        m_pMesh->ChangeAnimSet(m_AnimNo, m_pAnimCtrl);
+    }
+
+    RequestShot();
 }
