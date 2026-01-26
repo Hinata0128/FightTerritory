@@ -354,7 +354,7 @@ void Boss::DecideDifficltyByRound(float raund)
     {
         if (Raund < 90)
         {
-            SetDifficulty(BossDifficulty::Final);
+            SetDifficulty(BossDifficulty::Easy);
         }
         else
         {
@@ -696,6 +696,57 @@ void Boss::Defense()
 
 void Boss::DefenseEasy()
 {
+    float dt = Timer::GetInstance().DeltaTime();
+
+    D3DXVECTOR3 bossPos = GetPosition();
+    D3DXVECTOR3 portalPos = m_pPortal->GetPosition();
+    D3DXVECTOR3 playerPos = GetPlayerPos();
+
+    
+    //プレイヤーを見る
+    D3DXVECTOR3 look = playerPos - bossPos;
+    look.y = 0.0f;
+    D3DXVec3Normalize(&look, &look);
+    float angle = std::atan2f(-look.x, -look.z);
+    SetRotationY(angle);
+
+    //ポータル中心基準の方向
+    D3DXVECTOR3 toBoss = bossPos - portalPos;
+    toBoss.y = 0.0f;
+
+    float dist = D3DXVec3Length(&toBoss);
+    if (dist < 0.01f)
+        return;
+
+    D3DXVec3Normalize(&toBoss, &toBoss);
+
+    //円運動用の接線ベクトル
+    D3DXVECTOR3 up(0, 1, 0);
+    D3DXVECTOR3 tangent;
+    D3DXVec3Cross(&tangent, &up, &toBoss);
+
+    //円運動
+    D3DXVECTOR3 velocity = tangent * m_MoveSpeed;
+
+    //半径制御
+    if (dist > m_DefenseRadius)
+    {
+        velocity -= toBoss * m_MoveSpeed;
+    }
+
+    AddPosition(velocity * dt);
+
+    //歩きアニメ
+    const int WALK_ANIM = 2;
+    if (m_AnimNo != WALK_ANIM)
+    {
+        m_AnimNo = WALK_ANIM;
+        m_pMesh->ChangeAnimSet(m_AnimNo, m_pAnimCtrl);
+    }
+
+    //攻撃
+    RequestShot();
+
 }
 
 void Boss::DefenseHard()
