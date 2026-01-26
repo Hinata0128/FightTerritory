@@ -96,7 +96,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp;"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\nlohmann\json.hpp";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -116,7 +116,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp;"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\nlohmann\json.hpp";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -138,7 +138,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <LanguageStandard>stdcpp20</LanguageStandard>
-      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp;"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\nlohmann\json.hpp";Source;Source;Source\Effekseer\include;Source,Data</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -159,7 +159,7 @@
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
-      <AdditionalIncludeDirectories>"C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\hinat\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\json\json.hpp;"C:\Users\game\Desktop\FightTerritory_Extension\FightTerritory\Data\Library\nlohmann\json.hpp";Source;Source\Effekseer\include;Source</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
