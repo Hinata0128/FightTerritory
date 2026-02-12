@@ -211,59 +211,70 @@ void Title::UpdateSelect()
 {
     m_InputTimer += Timer::GetInstance().DeltaTime();
 
-    // 1. マウスの物理座標を取得
+    //マウスの物理座標を取得.
     HWND hWnd = DirectX11::GetInstance()->GethWnd();
     POINT mousePos;
     GetCursorPos(&mousePos);
     ScreenToClient(hWnd, &mousePos);
 
-    // 2. フルスクリーン/可変ウィンドウ対応：現在のクライアント領域のサイズを取得
     RECT rc;
     GetClientRect(hWnd, &rc);
     float windowW = (float)(rc.right - rc.left);
     float windowH = (float)(rc.bottom - rc.top);
 
-    // 0除算防止チェック
+    //0除算防止チェック
     if (windowW <= 0.0f) windowW = 1.0f;
     if (windowH <= 0.0f) windowH = 1.0f;
 
-    // 3. 物理座標をゲーム内の論理座標（1280x720）に変換
+    //物理座標をゲーム内の論理座標(1280x720)に変換.
     float mouseX = (float)mousePos.x * (1280.0f / windowW);
     float mouseY = (float)mousePos.y * (720.0f / windowH);
 
     SelectMenu oldSelect = m_Select;
 
-    // 4. ボタンの当たり判定（変換後のmouseX, mouseYを使用）
-    const float btnW = 320.0f; // 背景画像の幅
-    const float btnH = 80.0f;  // 背景画像の高さ
+    //ボタンの当たり判定
+    const float btnW = 320.0f; //背景画像の幅.
+    const float btnH = 80.0f;  //背景画像の高さ.
 
-    // 各ボタンの判定範囲（Draw時の補正値 -100, -15 を考慮）
+    //各ボタンの判定範囲.
     auto CheckMouseOver = [&](D3DXVECTOR3 pos) {
         float x = pos.x - 100.0f;
         float y = pos.y - 15.0f;
         return (mouseX >= x && mouseX <= x + btnW &&
             mouseY >= y && mouseY <= y + btnH);
-        };
+    };
 
-    // --- マウスホバーによる選択の更新（キーボード入力部分は削除） ---
-    if (CheckMouseOver(m_StartPos))  m_Select = SelectMenu::Start;
-    else if (CheckMouseOver(m_CreditPos)) m_Select = SelectMenu::Credit;
-    else if (CheckMouseOver(m_EndPos))    m_Select = SelectMenu::End;
+    //マウスホバーによる選択の更新.
+    if (CheckMouseOver(m_StartPos))
+    {
+        m_Select = SelectMenu::Start;
+    }
+    else if (CheckMouseOver(m_CreditPos))
+    {
+        m_Select = SelectMenu::Credit;
+    }
+    else if (CheckMouseOver(m_EndPos))
+    {
+        m_Select = SelectMenu::End;
+    }
 
-    // 選択項目が（マウス移動によって）変わった時のSE再生
-    if (m_Select != oldSelect) {
+    //SE再生.
+    if (m_Select != oldSelect)
+    {
         SoundManager::GetInstance()->PlaySE(SoundManager::SE_Select);
     }
 
-    // 5. 決定操作 (マウス左クリックのみ、スペースキーは削除)
-    // 0x8000で「今押されているか」を判定
-    if (GetAsyncKeyState(VK_LBUTTON) & 0x8000) {
-        if (m_InputTimer >= 0.2f) {
+    //決定操作.
+    if (GetAsyncKeyState(VK_LBUTTON) & 0x8000)
+    {
+        if (m_InputTimer >= 0.2f)
+        {
 
-            // マウス位置が、現在選択されている（ホバーしている）ボタンの上にあるか確認
+            //マウス位置が、現在選択されているボタンの上にあるか確認.
             bool onButton = CheckMouseOver(m_StartPos) || CheckMouseOver(m_CreditPos) || CheckMouseOver(m_EndPos);
 
-            if (onButton) {
+            if (onButton)
+            {
                 SoundManager::GetInstance()->PlaySE(SoundManager::SE_Enter);
 
                 switch (m_Select) {
